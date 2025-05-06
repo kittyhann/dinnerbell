@@ -1,0 +1,220 @@
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: white; /* Keeps the background white */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* Light shadow */
+  padding: 8px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.auth-buttons button {
+  margin-right: 12px; /* Add gap between buttons */
+}
+
+.logo {
+  font-size: 20px; /* reduced from 24px */
+}
+
+.nav-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.user-info .profile-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-info .profile-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links li {
+  margin-right: 12px; /* slightly tighter spacing */
+  cursor: pointer;
+  font-size: 14px; /* smaller text */
+}
+
+.nav-links a {
+  text-decoration: none; /* 🚫 No underline */
+  color: black;           /* 🖤 Default black color */
+  transition: color 0.3s ease; /* ✨ Smooth color change on hover */
+}
+
+.nav-links a:hover {
+  color: #888;            /* 🎯 Light gray on hover */
+}
+/* Existing styles trimmed for clarity */
+
+.menu-toggle {
+  display: none; /* ⛔ Hide on desktop */
+  position: fixed;
+  top: 0.5rem;
+  right: 1rem;
+  z-index: 1100;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+    z-index: 1001;
+  }
+
+  /* Blurred effect for the logo text and navbar background */
+  .navbar.blurred .logo {
+    filter: blur(5px); /* Apply blur effect to the logo text */
+    transition: filter 0.3s ease-in-out; /* Smooth transition for blur effect */
+  }
+
+  /* Overlay Effect */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Gray with transparency */
+    backdrop-filter: blur(5px); /* Optional: Adds blur effect */
+    z-index: 900; /* Behind the hamburger but in front of main content */
+    display: none; /* Initially hidden */
+  }
+
+  /* Display Overlay When Navbar is Open */
+  .overlay.active {
+    display: block;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 45%;
+    background: white;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 2rem 1.5rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    font-size: 13px;
+    padding-left: 1.5rem; /* Keep this if links align well */
+  }
+
+  .nav-links.active {
+    transform: translateX(0%);
+    padding-top: 3rem; /* Added gap for X above the links */
+  }
+
+  .nav-links li {
+    width: 100%;
+    margin-bottom: 0.5rem; /* Less space between items */
+  }
+
+  .nav-links li a,
+  .btn-signin,
+  .btn-signup {
+    font-size: 13px;
+  }
+
+  .btn-signin,
+.btn-signup {
+  width: 66%;                  /* Make them same width */
+  padding: 0.6rem 0.8rem;
+  border: 1px solid black;
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: center;  
+  transition: all 0.3s ease;
+}
+
+
+  .auth-buttons {
+    margin-top: 22rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+    width: 100%; /* match full width like li */
+  }
+  
+  
+
+  /* Hover effect for buttons */
+  /* Actual hover effect */
+.btn-signin:hover,
+.btn-signup:hover {
+  background: black;
+  color: white;
+}
+
+/* Active button style (manually toggled) */
+.btn-active {
+  background: black;
+  color: white;
+}
+
+  .separator {
+    margin: 1rem 0;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  .profile-content {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .nav-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  body.menu-open {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  
+}

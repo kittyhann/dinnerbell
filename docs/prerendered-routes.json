@@ -1,0 +1,7 @@
+{
+  "routes": {
+    "/dinnerbell": {},
+    "/dinnerbell/contact": {},
+    "/dinnerbell/profile": {}
+  }
+}

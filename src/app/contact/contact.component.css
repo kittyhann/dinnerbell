@@ -1,0 +1,101 @@
+.contact-page {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+.contact-banner {
+  background-image: url('/assets/telephone.jpg');
+  background-size:cover;
+  background-position: center;
+  height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-banner h1 {
+  color: white;
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.contact-header {
+  text-align: center;
+  margin: 40px 0 20px;
+}
+
+.contact-header h2 {
+  font-weight: bold;
+  color: #555;
+  font-size: 28px;
+}
+
+.contact-form-wrapper {
+  max-width: 1600px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start; /* ✨ Top-align now, not bottom */
+}
+
+/* Columns */
+.form-left, .form-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+/* ✨ Perfect sizing for the message box */
+.form-right .form-group textarea {
+  height: 108px; /* About 2 input heights stacked */
+  resize: none; /* No adjustable resize */
+}
+
+/* Submit button wrapper aligned nicely */
+.submit-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.submit-btn {
+  background: black;
+  color: white;
+  padding: 10px 25px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #333;
+}

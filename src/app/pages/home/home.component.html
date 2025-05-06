@@ -1,0 +1,84 @@
+<app-navbar></app-navbar>
+
+<div class="home-container">
+  <div class="card">
+    <div class="image-wrapper">
+      <img src="assets/restaurant.jpg" alt="Restaurant" class="main-image" />
+    </div>
+
+    <div class="info">
+      <h2 class="restaurant-heading">DinnerBell <span class="subtext">Restaurant & Bar</span></h2>
+      <div class="info-columns">
+        <div class="left-info">
+          <p class="with-icon">
+            <span class="fas fa-map-marker-alt icon-left"></span>
+            1390 Manila Bay Avenue, Suite 210<br />Makati City, Metro Manila 1226
+          </p>
+          <p class="with-icon">
+            <span class="fas fa-clock icon-left"></span>
+            4:00 PM - 11:00 PM
+          </p>
+        </div>
+        <div class="right-info">
+          <p class="with-icon">
+            <span class="fas fa-bars icon-left"></span>
+            DinnerBell is dedicated to creating a warm and inviting dining experience with a menu crafted for those who appreciate bold flavors and quality ingredients. With a focus on expertly prepared dishes and a welcoming atmosphere, every visit promises a memorable meal that brings people together to enjoy great food and good company.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row-booking">
+      <div class="inputs-group">
+        <label>Date:</label>
+        <input type="date" [(ngModel)]="selectedDate" [min]="minDate" />
+
+        <label>Time:</label>
+        <select [(ngModel)]="selectedTime">
+          <option>04:00 PM</option>
+          <option>05:00 PM</option>
+          <option>06:00 PM</option>
+          <option>07:00 PM</option>
+          <option>08:00 PM</option>
+          <option>09:00 PM</option>
+          <option>10:00 PM</option>
+          <option>11:00 PM</option>
+        </select>
+
+        <label>People:</label>
+        <input type="number" min="1" max="20" [(ngModel)]="guests" />
+      </div>
+
+      <button class="book-btn" (click)="bookTable()">Book a Table</button>
+    </div>
+
+    <!-- Booking Popup -->
+    <app-booking-form
+      *ngIf="showBookingForm"
+      [selectedDate]="selectedDate"
+      [selectedTime]="selectedTime"
+      [guests]="guests"
+      (close)="showBookingForm = false"
+      (bookingConfirmed)="onBookingConfirmed($event)">
+    </app-booking-form>
+
+    <!-- Confirmation Popup -->
+    <app-booked-confirmation
+      *ngIf="showConfirmation"
+      [booking]="bookingData"
+      (close)="showConfirmation = false">
+    </app-booked-confirmation>
+
+    <div class="time-slots-header">Available Time Slots</div>
+    <div class="time-slots">
+      <span>04:00 PM</span>
+      <span class="active">05:00 PM</span>
+      <span>06:00 PM</span>
+      <span>07:00 PM</span>
+      <span>08:00 PM</span>
+      <span>09:00 PM</span>
+      <span>10:00 PM</span>
+      <span>11:00 PM</span>
+    </div>
+  </div>
+</div>

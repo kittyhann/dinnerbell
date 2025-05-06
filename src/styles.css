@@ -1,0 +1,219 @@
+/* You can add global styles to this file, and also import other style files */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+  }
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 32px;
+    background: white;
+  }
+  
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  
+  .nav-links button {
+    padding: 8px 16px;
+    border: 1px solid black;
+    background: white;
+    color: black;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .btn-signin {
+    background: black;
+    color: white;
+  }
+  
+  .btn-signin:hover,
+  .btn-signup:hover {
+    background: black;
+    color: white;
+  }
+  
+  /* Modal styles */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .modal-content {
+    position: relative; /* Add this */
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+
+/* Remove gap and column direction for other labels inside modal */
+.modal-content label {
+  display: flex;
+  flex-direction: column;   /* Ensure other labels are stacked vertically */
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+  gap: 8px;                 /* Optional: Adjust gap for other labels */
+  margin-bottom: 16px;      /* Space below labels */
+}
+
+/* Ensure modal label text does not inherit unwanted styles */
+.modal-content .checkbox-inline label {
+  display: inline; /* Ensures it’s inline with the text */
+}
+  
+  .modal-content input {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 16px; /* Add some space between inputs */
+  }
+  
+  .modal-content p {
+    text-align: center; /* Centers the paragraph text */
+    margin-top: 16px;   /* Optional: add some spacing above the paragraph */
+  }
+  
+  .modal-content .link {
+    color: black;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .otp-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem 0;
+  }
+  
+  .otp-inputs input {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  
+  .otp-inputs input:focus {
+    outline: none;
+    border-color: #333;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    z-index: 1000;
+    transition: color 0.2s ease;
+  }
+  
+  .close-btn:hover {
+    color: black;
+  }  
+  
+  .black-btn {
+    background: black;
+    color: rgb(249, 199, 199);
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .black-btn:hover {
+    background-color: #333; /* Darker black/gray shade on hover */
+  }
+  
+  .link {
+    color: black;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  
+  @media screen and (max-width: 480px) {
+    .modal-content {
+      width: 90%;
+      padding: 16px;           /* Smaller padding */
+      border-radius: 10px;
+      gap: 8px !important;     /* Reduce internal spacing between elements */
+    }
+  
+    .modal {
+      padding: 8px;
+      align-items: flex-start;
+      padding-top: 60px;       /* Slightly less vertical offset */
+    }
+  
+    .close-btn {
+      top: 12px;
+      right: 16px;
+      font-size: 20px;
+    }
+  
+    .modal-content label {
+      margin-bottom: 8px;      /* Reduce spacing under labels */
+      gap: 4px;
+      font-size: 13px;
+    }
+  
+    .modal-content input {
+      padding: 8px;
+      margin-bottom: 10px;     /* Reduce vertical spacing between inputs */
+    }
+  
+    .black-btn {
+      padding: 10px;
+      font-size: 14px;
+    }
+  
+    .modal-content p {
+      margin-top: 12px;        /* Reduce space above paragraph */
+      font-size: 14px;
+    }
+  
+    .otp-inputs input {
+      width: 2.2rem;
+      height: 2.2rem;
+      font-size: 1.2rem;
+    }
+  }
+  
+  

@@ -1,0 +1,297 @@
+.home-container {
+  padding: 80px;
+  display: flex;
+  justify-content: center;
+  background-color: #f3f3f3;
+}
+
+
+.card {
+  width: 100%;
+  max-width: 1280px;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  padding: 24px 24px;  /* <-- Add this to create space all around */
+}
+
+.card > *:not(.image-wrapper) {
+  padding: 0 0;  /* Remove extra inner padding since the card has it now */
+}
+
+.image-wrapper {
+  text-align: center;  /* Center the image horizontally */
+}
+
+.main-image {
+  width: 100%;
+  height: auto;
+  max-height: 600px;  /* Reduced height */
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.restaurant-heading {
+  display: inline-block;
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  padding-top: 10px;
+}
+
+
+.subtext {
+  color: #555; /* Dark grey */
+}
+
+.info {
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+.info-columns {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  max-width: 100%;
+  position: relative;
+}
+
+.info-columns::before, .info-columns::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #000; /* or any color you prefer */
+}
+
+.info-columns::before {
+  top: -10px; /* Adjust based on where you want the underline */
+}
+
+.info-columns::after {
+  top: calc(100% + 10px); /* Adjust for spacing after the info columns */
+}
+
+.left-info, .right-info {
+  flex: 1;
+  min-width: 250px;
+  max-width: 50%;
+}
+
+.left-info p {
+  margin: 6px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.with-icon {
+  position: relative;
+  padding-left: 28px; /* Space for icon */
+  text-align: justify;
+}
+
+.icon-left {
+  position: absolute;
+  left: 0;
+  top: 4px; /* Adjust vertically if needed */
+}
+
+.left-info p:nth-child(2) {
+  margin-top: 60px; /* Adjust this value to your preference */
+}
+
+
+.right-info p {
+  margin: 6px 0;
+  font-size: 15px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.form-row-booking {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin: 32px 0 24px;
+  flex-wrap: wrap;
+}
+
+.inputs-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.inputs-group label {
+  font-weight: 500;
+}
+
+.inputs-group input,
+.inputs-group select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.book-btn {
+  background: black;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.book-btn:hover {
+  background-color: #333;
+}
+
+.time-slots-header {
+  text-align: left;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 24px 0 12px;
+}
+
+.time-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 32px;
+}
+
+.time-slots span {
+  padding: 10px 20px;
+  border: 1px solid #000;
+  background: white;
+  color: #333;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.time-slots span.active {
+  background: black;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 60px 16px 16px;  /* more top padding */
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .info {
+    padding: 0 16px;
+  }
+
+  .restaurant-heading {
+    font-size: 18px;
+    margin-bottom: 8px;
+    padding-top: 8px;
+    line-height: 1.3;
+  }
+
+  .subtext {
+    display: block;
+    font-size: 14px;
+  }
+
+  .info-columns {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .info-columns::before,
+  .info-columns::after {
+    display: block;
+    height: 2px;
+    background-color: #333; /* Darker underline */
+    position: static;
+    margin: 16px 0;
+  }
+
+  .left-info,
+  .right-info {
+    max-width: 100%;
+    min-width: auto;
+  }
+
+  .left-info p,
+  .right-info p {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .left-info p:nth-child(2) {
+    margin-top: 20px; /* Much closer to location */
+  }
+
+  .form-row-booking {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .inputs-group select {
+    width: 100%;
+    max-width: 100%;
+    font-size: 16px;
+    appearance: none; /* Removes native styling */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding-right: 30px; /* Room for icon if needed */
+  }
+
+  .inputs-group {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .inputs-group label {
+    font-size: 14px;
+  }
+
+  .inputs-group input,
+  .inputs-group select {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .book-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .time-slots-header {
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .time-slots {
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .time-slots span {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}

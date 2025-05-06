@@ -1,0 +1,74 @@
+
+  /* Booking Modal Enhancements */
+  .modal-header-row {
+    display: flex;
+    align-items: center;     /* vertically align arrow and text */
+    gap: 16px;
+    margin-bottom: 16px;
+    margin-top: 8px;         /* spacing above row */
+  }
+  .modal-header {
+    font-size: 20px;
+    margin: 0;               /* remove default h3 spacing */
+  }
+  
+  .booking-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 0 12px; /* reduce top gap, keep slight bottom gap */
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .info-item i {
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  
+  .info-item span {
+    text-align: left;
+    line-height: 1.4;
+  }
+  
+  
+  .booking-modal hr {
+    margin: 4px 0; /* reduced vertical spacing above and below */
+  }
+  
+  .booking-modal label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  .booking-modal input {
+    padding: 10px;
+    margin-bottom: 12px; /* reduced spacing between fields */
+  }
+  
+  .back-arrow {
+    font-size: 28px;
+    font-weight: 800;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .back-arrow:hover {
+    color: black;
+  }
+
+
+  .modal-content hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 4px 0 4px; /* also tighter spacing for any other hr inside modal */
+  }

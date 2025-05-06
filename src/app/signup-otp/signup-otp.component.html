@@ -1,0 +1,35 @@
+<div class="modal">
+  <div class="modal-content">
+    <!-- Close Button -->
+    <span class="close-btn" (click)="close.emit()">×</span>
+
+    <!-- Modal Heading -->
+    <h2 class="modal-title">One Time Password</h2>
+
+    <!-- Instructions Text -->
+    <p class="modal-instructions">You will receive a One Time Password for registration.</p>
+
+    <!-- OTP Input Fields -->
+    <div class="otp-inputs">
+      <input 
+        *ngFor="let digit of otp; let i = index"
+        [ngModel]="otp[i]"
+        maxlength="1"
+        class="otp-input"
+        (input)="onOtpInput(i)"
+        (focus)="onFocus(i)"
+        [attr.disabled]="otp[i] ? true : null" />
+    </div>
+
+    <!-- Resend OTP Timer -->
+    <p class="resend-timer">Resend OTP in <span>{{ resendTimer }}</span></p>
+
+    <!-- Submit Button -->
+    <button class="black-btn" (click)="submitOtp()">Submit OTP</button>
+
+    <!-- Sign In Link -->
+    <p class="sign-in-link">
+      Already a user? <span class="link" (click)="switchToSignIn()">Sign In</span>
+    </p>
+  </div>
+</div>

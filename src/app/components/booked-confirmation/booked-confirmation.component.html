@@ -1,0 +1,46 @@
+<div class="modal" *ngIf="booking">  
+  <div class="modal-content booking-confirmation">  
+
+    <!-- Success Icon + Title -->  
+    <div class="confirmation-header">  
+      <div class="check-icon">
+        <i class="fas fa-check-circle"></i>  
+      </div>  
+      <h3>Table Booked Successfully</h3>  
+    </div>  
+
+    <hr class="divider" />  
+
+    <!-- Name + Number -->  
+    <div class="confirmation-name">
+      {{ booking.name }}&nbsp;{{ booking.number }}
+    </div>
+
+    <hr class="divider" />  
+
+    <!-- Booking Info -->
+    <div class="confirmation-details">
+      <div class="info-item">
+        <i class="fas fa-calendar-alt"></i>
+        <span>{{ booking.dateTime | date: 'dd MMMM yyyy' }} | {{ booking.dateTime | date: 'shortTime' }}</span>
+      </div>
+
+      <div class="info-item">
+        <i class="fas fa-user-friends"></i>
+        <span>{{ booking.guests }} Guest{{ booking.guests > 1 ? 's' : '' }}</span>
+      </div>
+    </div>
+
+    <hr class="divider" />  
+
+    <!-- Done Button -->  
+    <button class="black-btn" (click)="close.emit()">Done</button>  
+
+    <!-- Note -->  
+    <p class="confirmation-note">  
+      Your table is reserved! Since you reserved your table with DinnerBell,<br />  
+      you will automatically receive 2% off your bill when you pay.  
+    </p>  
+
+  </div>  
+</div>

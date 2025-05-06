@@ -1,0 +1,80 @@
+<app-navbar></app-navbar>
+
+<div class="profile-wrapper">
+  <div class="profile-content">
+    <div class="profile-card">
+      <div class="profile-header">
+        <i class="fas fa-arrow-left back-arrow" (click)="goBack()"></i>
+        <h2>My Profile</h2>
+      </div>
+
+      <div class="avatar-wrapper">
+        <img [src]="previewUrl ? previewUrl : user.avatarUrl" alt="Profile Picture" class="avatar" />
+        <span class="edit-avatar" (click)="triggerFileInput(fileInput)">✎</span>
+        <input type="file" #fileInput accept="image/*" (change)="onFileSelected($event)" hidden />
+      </div>
+
+      <form>
+        <label>Email Address</label>
+        <input type="email" [value]="user.email" disabled />
+
+        <label>Full Name</label>
+        <input type="text" [(ngModel)]="user.name" name="name" />
+
+        <label>Mobile Number</label>
+        <input type="text" [(ngModel)]="user.phone" name="phone" />
+
+        <div class="button-group">
+          <button type="button" (click)="goBack()">Go Back</button>
+          <button type="button" (click)="saveChanges()">Save Changes</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="history-card">
+      <h2>History and Recent Bookings</h2>
+      <div *ngFor="let booking of bookings" class="booking-entry">
+        <div class="booking-top">
+          <div class="booking-status" [ngClass]="{
+            'status-reserved': booking.status === 'Reserved',
+            'status-cancelled': booking.status === 'Cancelled',
+            'status-completed': booking.status === 'Completed'
+          }">
+            <strong>{{ booking.status }}</strong>
+          </div>
+          <div class="booking-time-ago">{{ booking.timeAgo }}</div>
+        </div>
+
+        <div class="booking-bottom">
+          <div class="booking-date-time">
+            <i class="fa fa-calendar-alt"></i>
+            {{ booking.date }} | {{ booking.time }}
+          </div>
+          <div *ngIf="booking.status === 'Reserved'" class="cancel-link">
+            <a (click)="openCancelPopup(booking.id)">Cancel Booking</a>
+          </div>
+        </div>
+
+        <div class="booking-guests">
+          <i class="fa fa-user-friends"></i>
+          {{ booking.guests }} Guests
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div *ngIf="showCancelModal" class="cancel-modal">
+  <div class="cancel-modal-content">
+    <p class="cancel-modal-heading">Are you sure you want to cancel the booking?</p>
+
+    <div class="cancel-button-container">
+      <button class="cancel-btn-red" (click)="confirmCancel()">Yes</button>
+      <button class="cancel-btn-black" (click)="closeCancelPopup()">Go Back</button>
+    </div>
+
+    <p><span class="cancel-policy-link">Cancellation Policy</span></p>
+  </div>
+</div>
+

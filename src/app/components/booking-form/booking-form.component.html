@@ -1,0 +1,46 @@
+<div class="modal">
+  <div class="modal-content booking-modal">
+
+    <div class="modal-header-row">
+      <span class="back-arrow" (click)="close.emit()">
+        <i class="fa fa-chevron-left"></i>
+      </span>
+      <h3 class="modal-header"><strong>DinnerBell</strong> Restaurant & Bar</h3>
+    </div>
+
+    <hr />
+
+    <!-- Booking Info -->
+    <div class="booking-info">
+      <div class="info-item">
+        <i class="fa fa-calendar-alt"></i>
+        <span>
+          {{ selectedDate || (currentDate | date: 'yyyy-MM-dd') }} |
+          {{ selectedTime || defaultTime }}
+        </span>
+      </div>
+      <div class="info-item">
+        <i class="fa fa-user-friends"></i>
+        <span>{{ guests }} Guests</span>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Inputs -->
+    <label>
+      Mobile Number:
+      <input type="text" [(ngModel)]="mobileNumber" placeholder="e.g. 09952099119" />
+    </label>
+
+    <label>
+      Full Name:
+      <input type="text" [(ngModel)]="fullName" placeholder="e.g. Keith Casimir" />
+    </label>
+
+
+    <!-- Reserve Button -->
+    <button class="black-btn" (click)="submitBooking()">Reserve Now</button>
+
+  </div>
+</div>

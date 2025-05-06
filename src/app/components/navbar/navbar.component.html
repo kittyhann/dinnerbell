@@ -1,0 +1,57 @@
+<div class="overlay" [class.active]="menuOpen"></div>
+<nav class="navbar" [class.blurred]="menuOpen">
+  <div class="logo">Welcome to <strong>DinnerBell</strong></div>
+
+  <!-- Hamburger Icon -->
+  <button class="menu-toggle" (click)="toggleMenu()">
+    <span *ngIf="!menuOpen">&#9776;</span> <!-- Hamburger Icon -->
+    <span *ngIf="menuOpen">✕</span> <!-- X Icon -->
+  </button>
+
+  <!-- Navigation Links -->
+  <ul class="nav-links" [class.active]="menuOpen">
+    <li><a routerLink="/">Home</a></li>
+    <li><a routerLink="/contact" routerLinkActive="active">Contact Us</a></li>
+
+    <ng-container *ngIf="user; else guest">
+      <li>
+        <a class="signout-link" (click)="signOut()">Sign Out</a>
+      </li>
+      <li class="separator"></li>
+      <li class="user-info">
+        <a routerLink="/profile" class="profile-link">
+          <div class="profile-content">
+            <span class="user-name">{{ user.name }}</span>
+            <img [src]="user.avatarUrl || 'assets/default-avatar.jpg'" alt="Profile Picture" class="nav-avatar" />
+          </div>
+        </a>
+      </li>      
+    </ng-container>    
+
+    <ng-template #guest>
+      <li class="separator"></li>
+      <div class="auth-buttons">
+        <button
+          class="btn-signin"
+          [ngClass]="{ 'btn-active': activeAuthBtn === 'signin' }"
+          (click)="setActive('signin'); openSignIn(); closeMenu()"
+        >
+          Sign In
+        </button>
+      
+        <button
+          class="btn-signup"
+          [ngClass]="{ 'btn-active': activeAuthBtn === 'signup' }"
+          (click)="setActive('signup'); openSignUp(); closeMenu()"
+        >
+          Sign Up
+        </button>
+      </div>
+    </ng-template>
+  </ul>
+</nav>
+
+<!-- Modals -->
+<app-signin *ngIf="showSignIn" (close)="closeModals()" (switchForm)="handleFormSwitch($event)"></app-signin>
+<app-signup *ngIf="showSignUp" (close)="closeModals()" (switchForm)="handleFormSwitch($event)"></app-signup>
+<app-signup-otp *ngIf="showOtp" (close)="closeModals()" (switchForm)="handleFormSwitch($event)"></app-signup-otp>
