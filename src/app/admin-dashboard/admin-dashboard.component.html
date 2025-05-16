@@ -1,0 +1,103 @@
+<div class="admin-dashboard">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">🍕</div>
+    <nav>
+      <ul>
+        <li title="Reservations" (click)="showUserList = false"><i class="fas fa-calendar"></i></li>
+        <li title="Users" (click)="showUserList = true"><i class="fas fa-users"></i></li>
+        <li title="Logout" (click)="signOut()"><i class="fas fa-sign-out-alt"></i></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <app-user-list *ngIf="showUserList"></app-user-list>
+
+    <ng-container *ngIf="!showUserList">
+      <header class="toolbar">
+        <div class="filters">
+          <label class="filter-label">Find Reservation:</label>
+
+          <div class="filter-item">
+            <input type="date" [(ngModel)]="reservationDate" placeholder="Date" />
+          </div>
+
+          <div class="filter-item">
+            <select [(ngModel)]="reservationTime">
+              <option value="All">All</option>
+              <option *ngFor="let hour of ['4','5','6','7','8','9','10','11']" [value]="hour">{{ hour }} PM</option>
+            </select>
+          </div>
+
+          <div class="filter-item">
+            <input type="text" placeholder="Search Name" [(ngModel)]="reservationName" />
+          </div>
+        </div>
+      </header>
+
+      <section class="reservations">
+        <ng-container *ngFor="let slot of filteredReservations">
+          <div class="timeslot">
+            <h4>{{ slot.time }} PM</h4>
+
+            <div class="booking-card" *ngFor="let booking of getFilteredBookings(slot)">
+              <div class="booking-info">
+                <p>{{ booking.name }}<br />👥 {{ booking.seats }}</p>
+                <button class="release-btn" (click)="releaseBooking(booking, slot.time)">Release</button>
+              </div>
+            </div>
+
+            <p class="seats-left">
+              {{ getTotalSeats(slot) }}/{{ maxSeats }}
+            </p>
+
+            <button class="reserve-btn"
+                    [disabled]="getTotalSeats(slot) >= maxSeats"
+                    (click)="openReservationModal(slot.time)">
+              <i class="fas fa-plus"></i> Reserve Table
+            </button>
+          </div>
+        </ng-container>
+      </section>
+
+      <!-- Reservation Modal -->
+      <div class="modal" *ngIf="showReservationModal">
+        <div class="modal-content">
+          <h3>Make a Reservation</h3>
+          <label>Full Name</label>
+          <input [(ngModel)]="newBooking.name" placeholder="Full Name" />
+
+          <label>Mobile Number</label>
+          <input [(ngModel)]="newBooking.phone" placeholder="Mobile Number" />
+
+          <label>Email Address (Optional)</label>
+          <input [(ngModel)]="newBooking.email" placeholder="Email Address" />
+
+          <label>Guests</label>
+          <select [(ngModel)]="newBooking.seats">
+            <option *ngFor="let i of [].constructor(availableSeats); let index = index" [value]="index + 1">
+              {{ index + 1 }}
+            </option>
+          </select>
+
+          <div class="modal-actions">
+            <button (click)="confirmReservation()">Reserve Now</button>
+            <button (click)="closeReservationModal()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Modal -->
+      <div class="modal" *ngIf="showSuccessModal">
+        <div class="modal-content">
+          <h3>✅ Table Booked Successfully</h3>
+          <p>{{ newBooking.name }} - {{ newBooking.phone }}</p>
+          <p>📅 {{ reservationDate }} | 🕛 {{ selectedTimeSlot }} PM | 👥 {{ newBooking.seats }} Guests</p>
+          <button (click)="closeSuccessModal()">Done</button>
+        </div>
+      </div>
+    </ng-container>
+  </main>
+</div>

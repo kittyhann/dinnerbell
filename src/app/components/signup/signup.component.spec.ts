@@ -1,6 +1,8 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { UserService, User } from '../../services/user.service';
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user.model';
+
 
 @Component({
   selector: 'app-signup',
@@ -27,11 +29,14 @@ export class SignupComponent {
     }
 
     const pendingUser: User = {
-      name: this.username,
-      email: this.email,
-      phone: this.phone,
-      password: this.password
-    };
+  name: this.username,
+  email: this.email,
+  phone: this.phone,
+  password: this.password,
+  avatarUrl: '', // Default to empty or placeholder string
+  bookings: []   // Start with no bookings
+};
+
 
     this.userService.registerUser(pendingUser);
     alert('OTP sent successfully! (Simulated)');

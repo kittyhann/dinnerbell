@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 // src/app/components/signin/signin.component.ts
 import { UserService } from '../../services/user.service';
-import { User } from '../../models/user.model'; // Import directly from the model file
 
 
 @Component({
@@ -31,7 +30,29 @@ export class SigninComponent {
       return;
     }
 
-    const storedUser: User | null = this.userService.getRegisteredUser();
+    // 🔐 Static admin login
+  if (trimmedUserName === 'admin' && trimmedPassword === 'admin123') {
+  alert('Welcome, Admin!');
+  this.userService.setUser({
+    name: 'admin',
+    email: '',
+    phone: '',
+    password: '',
+    avatarUrl: '',
+    bookings: [],
+    role: 'admin'
+  });
+  this.close.emit();
+  this.router.navigateByUrl('/admin');
+  return;
+}
+
+    // Fetch all users from the service
+    const allUsers = this.userService.getAllUsers();
+    console.log('All Registered Users:', allUsers);
+
+    // Find the user matching the entered username (case-insensitive)
+    const storedUser = allUsers.find(u => u.name.toLowerCase() === trimmedUserName.toLowerCase());
     console.log('Stored User:', storedUser);
 
     if (

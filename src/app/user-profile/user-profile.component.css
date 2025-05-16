@@ -317,3 +317,106 @@ form input {
 .cancel-policy-link:hover {
   color: darkgray;
 }
+
+.user-controls-bottom {
+  margin-top: 30px; /* Adds space between form and button */
+}
+
+.no-bookings-message {
+  text-align: left;
+  padding-left: 0;
+  padding-top: 20px;
+  font-style: italic;
+  color: #888;
+}
+
+.admin-controls-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: auto; /* Pushes content down */
+  padding-top: 2rem;
+  border-top: 1px solid #ddd;
+}
+
+.status-label {
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.text-green {
+  color: green;
+}
+
+.text-red {
+  color: red;
+}
+
+.status-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.delete-btn,
+.reactivate-btn {
+  padding: 10px 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+  font-size: 0.95rem;
+}
+
+/* Delete Button Style */
+.delete-btn {
+  background-color: #fff;
+  border: 1px solid red;
+  color: red;
+}
+
+.delete-btn:hover {
+  background-color: #ffe5e5;
+}
+
+/* Reactivate Button Style */
+.reactivate-btn {
+  background-color: green;
+  color: white;
+}
+
+.reactivate-btn:hover {
+  background-color: #008000;
+}
+
+/* Save Button at Bottom */
+.save-btn {
+  background-color: black;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;         /* ⬅ Makes it span the entire parent width */
+}
+
+.save-btn:hover {
+  background-color: #222;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-label {
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin: 0; /* remove bottom margin to align better */
+}
+

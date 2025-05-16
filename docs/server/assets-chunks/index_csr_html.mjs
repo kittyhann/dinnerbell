@@ -9,10 +9,10 @@ export default `<!doctype html>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<style>*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow-x:hidden}body{font-family:Inter,sans-serif}</style><link rel="stylesheet" href="styles-EA35V5WR.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles-EA35V5WR.css"></noscript></head>
+<style>*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow-x:hidden}body{font-family:Inter,sans-serif}</style><link rel="stylesheet" href="styles-EAXBNCMW.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles-EAXBNCMW.css"></noscript></head>
 <body ngcm="">
   <base href="/dinnerbell/">
   <app-root></app-root>
-<script src="polyfills-FFHMD2TL.js" type="module"></script><script src="main-7242TABE.js" type="module"></script></body>
+<script src="polyfills-FFHMD2TL.js" type="module"></script><script src="main-UIKTWHTF.js" type="module"></script></body>
 </html>
 `;

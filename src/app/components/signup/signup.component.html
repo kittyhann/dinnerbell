@@ -3,23 +3,28 @@
     <span class="close-btn" (click)="close.emit()">×</span>
     <h2>Let’s get you started</h2>
 
-    <!-- Username Input -->
-    <label for="username">Username</label>
-    <input id="username" placeholder="Username" type="text" [(ngModel)]="username" name="username" />
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input id="username" placeholder="Username" type="text" [(ngModel)]="username" name="username" />
+    </div>
 
-    <!-- Email Address Input -->
-    <label for="email">Email Address</label>
-    <input id="email" placeholder="Email Address" type="email" [(ngModel)]="email" name="email" />
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input id="email" placeholder="Email Address" type="email" [(ngModel)]="email" name="email" />
+    </div>
 
-    <!-- Phone Number Input -->
-    <label for="phone">Phone Number</label>
-    <input id="phone" placeholder="Phone Number" type="tel" [(ngModel)]="phone" name="phone" />
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input id="phone" placeholder="Phone Number" type="tel" [(ngModel)]="phone" name="phone" />
+    </div>
 
-    <!-- Password Input -->
-    <label for="password">Password</label>
-    <input id="password" placeholder="Password" type="password" [(ngModel)]="password" name="password" />
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" placeholder="Password" type="password" [(ngModel)]="password" name="password" />
+    </div>
 
     <button class="black-btn" (click)="sendOtp()">Send One Time Password</button>
+
     <p>Already a user? <span class="link" (click)="switchToSignIn()">Sign In</span></p>
   </div>
 </div>

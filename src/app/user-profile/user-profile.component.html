@@ -1,16 +1,25 @@
-<app-navbar></app-navbar>
+<!-- Only show navbar if not admin -->
+<app-navbar *ngIf="!viewerIsAdmin"></app-navbar>
 
 <div class="profile-wrapper">
   <div class="profile-content">
     <div class="profile-card">
       <div class="profile-header">
-        <i class="fas fa-arrow-left back-arrow" (click)="goBack()"></i>
-        <h2>My Profile</h2>
+        <!-- Show Go Back only for normal users -->
+        <i 
+          *ngIf="!viewerIsAdmin" 
+          class="fas fa-arrow-left back-arrow" 
+          (click)="goBack()">
+        </i>
+        <h2>{{ viewerIsAdmin ? 'User Profile' : 'My Profile' }}</h2>
       </div>
 
       <div class="avatar-wrapper">
-        <img [src]="previewUrl ? previewUrl : user.avatarUrl" alt="Profile Picture" class="avatar" />
-        <span class="edit-avatar" (click)="triggerFileInput(fileInput)">✎</span>
+        <img [src]="previewUrl || user.avatarUrl" alt="Profile Picture" class="avatar" />
+        <span 
+          class="edit-avatar" 
+          *ngIf="!isAdmin" 
+          (click)="triggerFileInput(fileInput)">✎</span>
         <input type="file" #fileInput accept="image/*" (change)="onFileSelected($event)" hidden />
       </div>
 
@@ -19,20 +28,35 @@
         <input type="email" [value]="user.email" disabled />
 
         <label>Full Name</label>
-        <input type="text" [(ngModel)]="user.name" name="name" />
+        <input type="text" [(ngModel)]="user.name" name="name" [disabled]="isAdmin" />
 
         <label>Mobile Number</label>
-        <input type="text" [(ngModel)]="user.phone" name="phone" />
+        <input type="text" [(ngModel)]="user.phone" name="phone" [disabled]="isAdmin" />
 
-        <div class="button-group">
-          <button type="button" (click)="goBack()">Go Back</button>
-          <button type="button" (click)="saveChanges()">Save Changes</button>
-        </div>
+        <label *ngIf="viewerIsAdmin">Joined On</label>
+        <input *ngIf="viewerIsAdmin" type="text" [value]="user.joinedOn" disabled />
       </form>
+
+      <!-- Save Changes button for normal users -->
+      <div *ngIf="!viewerIsAdmin" class="user-controls-bottom">
+        <button 
+          type="button" 
+          class="save-btn" 
+          (click)="saveChanges()"
+          [disabled]="loading">
+          Save Changes
+        </button>
+      </div>
     </div>
 
+    <!-- Booking History -->
     <div class="history-card">
       <h2>History and Recent Bookings</h2>
+
+      <div *ngIf="bookings.length === 0" class="no-bookings-message">
+        <p>No bookings yet. Time to make your first reservation!</p>
+      </div>
+      
       <div *ngFor="let booking of bookings" class="booking-entry">
         <div class="booking-top">
           <div class="booking-status" [ngClass]="{
@@ -50,7 +74,7 @@
             <i class="fa fa-calendar-alt"></i>
             {{ booking.date }} | {{ booking.time }}
           </div>
-          <div *ngIf="booking.status === 'Reserved'" class="cancel-link">
+          <div *ngIf="booking.status === 'Reserved' && !isAdmin" class="cancel-link">
             <a (click)="openCancelPopup(booking.id)">Cancel Booking</a>
           </div>
         </div>
@@ -60,21 +84,60 @@
           {{ booking.guests }} Guests
         </div>
       </div>
+
+      <!-- Admin Controls -->
+      <div *ngIf="viewerIsAdmin" class="admin-controls-bottom">
+
+        <!-- User Status Row -->
+        <div class="status-row">
+          <p class="status-label">
+            User Status: 
+            <strong [ngClass]="{
+              'text-green': user.status === 'Active',
+              'text-red': user.status === 'Deleted'
+            }">
+              {{ user.status }}
+            </strong>
+          </p>
+
+          <div class="status-buttons">
+            <button 
+              class="delete-btn"
+              *ngIf="user.status === 'Active'" 
+              (click)="markAsDeleted()">
+              Delete User
+            </button>
+
+            <button 
+              class="reactivate-btn"
+              *ngIf="user.status === 'Deleted'" 
+              (click)="markAsActive()">
+              Reactivate User
+            </button>
+          </div>
+        </div>
+
+        <!-- Save Button for Admin -->
+        <button 
+          type="button" 
+          class="save-btn" 
+          (click)="saveChanges()"
+          [disabled]="loading">
+          Save/Update Details
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Confirmation Modal -->
+  <div *ngIf="showCancelModal" class="cancel-modal">
+    <div class="cancel-modal-content">
+      <p class="cancel-modal-heading">Are you sure you want to cancel the booking?</p>
+      <div class="cancel-button-container">
+        <button class="cancel-btn-red" (click)="confirmCancel()">Yes</button>
+        <button class="cancel-btn-black" (click)="closeCancelPopup()">Go Back</button>
+      </div>
+      <p><span class="cancel-policy-link">Cancellation Policy</span></p>
     </div>
   </div>
 </div>
-
-<!-- Cancel Confirmation Modal -->
-<div *ngIf="showCancelModal" class="cancel-modal">
-  <div class="cancel-modal-content">
-    <p class="cancel-modal-heading">Are you sure you want to cancel the booking?</p>
-
-    <div class="cancel-button-container">
-      <button class="cancel-btn-red" (click)="confirmCancel()">Yes</button>
-      <button class="cancel-btn-black" (click)="closeCancelPopup()">Go Back</button>
-    </div>
-
-    <p><span class="cancel-policy-link">Cancellation Policy</span></p>
-  </div>
-</div>
-

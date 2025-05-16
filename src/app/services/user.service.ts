@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { User, Booking } from '../models/user.model'; // ✅ Import models
+import { User, Booking } from '../models/user.model';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private loggedIn = false;
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
 
@@ -16,12 +16,18 @@ export class UserService {
   showSignIn$ = new BehaviorSubject(false);
   showSignUp$ = new BehaviorSubject(false);
 
-  constructor(private router: Router) {
+  private readonly STORAGE_KEY = 'registeredUsers';
+  private readonly CURRENT_USER_KEY = 'currentUser';
+
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     this.loadUserFromLocalStorage();
   }
 
   private isBrowser(): boolean {
-    return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+    return isPlatformBrowser(this.platformId);
   }
 
   private loadUserFromLocalStorage() {
@@ -31,40 +37,17 @@ export class UserService {
         try {
           const user: User = JSON.parse(storedUser);
           this.userSubject.next(user);
-          this.loggedIn = true;
         } catch (error) {
-          console.error("Failed to parse user from localStorage", error);
+          console.error('Failed to parse user from localStorage', error);
         }
       }
     }
   }
 
-  registerUser(user: User) {
-    this.registeredUser = user;
-    if (this.isBrowser()) {
-      localStorage.setItem('registeredUser', JSON.stringify(user));
-    }
-  }
+  // ------------------------- Auth & Session -------------------------
 
-  getRegisteredUser(): User | null {
-    if (!this.registeredUser && this.isBrowser()) {
-      const stored = localStorage.getItem('registeredUser');
-      if (stored) {
-        try {
-          this.registeredUser = JSON.parse(stored);
-        } catch (error) {
-          console.error("Failed to parse registered user from localStorage", error);
-        }
-      }
-    }
-    return this.registeredUser;
-  }
-
-  removeRegisteredUser() {
-    this.registeredUser = null;
-    if (this.isBrowser()) {
-      localStorage.removeItem('registeredUser');
-    }
+  isLoggedIn(): boolean {
+    return this.userSubject.value !== null;
   }
 
   getUser(): User | null {
@@ -72,16 +55,15 @@ export class UserService {
   }
 
   setUser(user: User) {
-    const newUser = { ...user }; // 👈 Force a new reference
+    const newUser = { ...user };
     this.userSubject.next(newUser);
-    this.loggedIn = true;
     if (this.isBrowser()) {
       localStorage.setItem('user', JSON.stringify(newUser));
     }
   }
+
   clearUser() {
     this.userSubject.next(null);
-    this.loggedIn = false;
     if (this.isBrowser()) {
       localStorage.removeItem('user');
     }
@@ -91,6 +73,8 @@ export class UserService {
     this.clearUser();
     this.router.navigate(['/']);
   }
+
+  // ------------------------- Modal Management -------------------------
 
   openSignIn() {
     this.showSignIn$.next(true);
@@ -107,29 +91,100 @@ export class UserService {
     this.showSignUp$.next(false);
   }
 
-  async uploadProfilePicture(file: File): Promise<string> {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        resolve(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    });
+  // ------------------------- Registration & Users List -------------------------
+
+  registerUser(user: User) {
+    const users = this.getAllUsers();
+    users.push(user);
+    if (this.isBrowser()) {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(users));
+    }
   }
 
-  isLoggedIn(): boolean {
-    return this.userSubject.value !== null;
+  getAllUsers(): User[] {
+    if (!this.isBrowser()) return [];
+    const data = localStorage.getItem(this.STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
   }
+
+  getRegisteredUserByEmail(email: string): User | null {
+    const users = this.getAllUsers();
+    return users.find(user => user.email === email) || null;
+  }
+
+  getCurrentUser(): User | null {
+    if (!this.isBrowser()) return null;
+    const stored = localStorage.getItem(this.CURRENT_USER_KEY);
+    return stored ? JSON.parse(stored) : null;
+  }
+
+  removeRegisteredUser() {
+    this.registeredUser = null;
+    if (this.isBrowser()) {
+      localStorage.removeItem('registeredUser');
+    }
+  }
+
+  getUsers(): User[] {
+    if (!this.isBrowser()) return [];
+    const storedUsers = localStorage.getItem(this.STORAGE_KEY);
+    return storedUsers ? JSON.parse(storedUsers) : [];
+  }
+
+  addUser(user: User) {
+    const users = this.getUsers();
+    users.push(user);
+    if (this.isBrowser()) {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(users));
+    }
+  }
+
+  updateUser(updatedUser: User) {
+    let users = this.getUsers();
+    const index = users.findIndex(u => u.email === updatedUser.email);
+    if (index !== -1) {
+      users[index] = updatedUser;
+      if (this.isBrowser()) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(users));
+      }
+
+      if (this.getUser()?.email === updatedUser.email) {
+        this.setUser(updatedUser);
+      }
+    }
+  }
+
+  // ------------------------- Bookings -------------------------
 
   addBooking(booking: Booking) {
     const user = this.getUser();
     if (!user) return;
 
-    if (!user.bookings) {
-      user.bookings = [];
-    }
-
-    user.bookings.unshift(booking); // Most recent first
+    user.bookings = user.bookings || [];
+    user.bookings.unshift(booking);
     this.setUser(user);
+    this.updateUser(user);
+  }
+
+  removeBooking(booking: Booking) {
+    const user = this.getUser();
+    if (!user || !user.bookings) return;
+
+    const index = user.bookings.findIndex(b => b === booking);
+    if (index > -1) {
+      user.bookings.splice(index, 1);
+      this.setUser(user);
+      this.updateUser(user);
+    }
+  }
+
+  // ------------------------- Profile Picture -------------------------
+
+  async uploadProfilePicture(file: File): Promise<string> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
   }
 }

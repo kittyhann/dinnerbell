@@ -74,6 +74,11 @@ body {
     flex-direction: column;
     gap: 16px;
   }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+  }
   
 
 /* Remove gap and column direction for other labels inside modal */

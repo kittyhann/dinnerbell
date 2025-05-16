@@ -1,7 +1,12 @@
 {
   "routes": {
     "/dinnerbell": {},
+    "/dinnerbell/admin": {},
+    "/dinnerbell/admin-dashboard": {},
+    "/dinnerbell/admin-dashboard/user-list": {},
     "/dinnerbell/contact": {},
-    "/dinnerbell/profile": {}
+    "/dinnerbell/profile": {},
+    "/dinnerbell/profile/user1@example.com": {},
+    "/dinnerbell/profile/user2@example.com": {}
   }
 }

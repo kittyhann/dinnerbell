@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { UserService, } from '../services/user.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-signup-otp',
@@ -29,10 +29,17 @@ export class SignupOtpComponent {
 
   // Submit OTP
   submitOtp() {
-    const otpValue = this.otp.join('');
 
-    // Notify user about successful OTP entry and signup
+
+    // Simulate OTP validation (for this example, we just check if OTP length is correct)
     alert('Signup successful! Please proceed to sign-in.');
+
+    // Once OTP is successfully entered, mark the user as confirmed and ready for login
+    // Here, you may want to check if OTP is correct or do some validation logic
+    // You can store this in localStorage or update the user's status in the UserService
+
+    // Clear user data after OTP submission (optional)
+    // this.userService.clearUserData();
 
     // Switch to the sign-in form after successful signup
     this.switchForm.emit('signin');

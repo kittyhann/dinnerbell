@@ -3,14 +3,16 @@
     <span class="close-btn" (click)="close.emit()">×</span>
     <h2>Welcome Back</h2>
 
-    <!-- Username Input -->
-    <label for="username">Username</label>
-    <input id="username" placeholder="Username" type="text" [(ngModel)]="userName" />
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input id="username" placeholder="Username" type="text" [(ngModel)]="userName" />
+    </div>
 
-    <!-- Password Input -->
-    <label for="password">Password</label>
-    <input id="password" placeholder="Password" type="password" [(ngModel)]="password" /> 
-      
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" placeholder="Password" type="password" [(ngModel)]="password" /> 
+    </div>
+
     <button class="black-btn" (click)="signIn()">Sign In</button>    
     <p>Don't have an account? <span class="link" (click)="switchToSignUp()">Sign Up</span></p>
   </div>

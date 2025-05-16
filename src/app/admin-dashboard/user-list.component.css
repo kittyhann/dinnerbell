@@ -1,0 +1,82 @@
+.user-list-container {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.toolbar input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 250px;
+}
+
+.toolbar button {
+  padding: 8px 14px;
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.toolbar button:hover {
+  background-color: #333;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.user-table th,
+.user-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.user-table thead {
+  background-color: #f0f0f0;
+}
+
+.user-table tr:last-child td {
+  border-bottom: none;
+}
+
+.user-table button {
+  background: transparent;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  padding: 4px 6px;
+}
+
+.user-table button:hover {
+  color: #0056b3;
+}
+
+/* Status styling */
+.active {
+  color: green;
+  font-weight: 600;
+}
+
+.deleted {
+  color: red;
+  font-weight: 600;
+}
