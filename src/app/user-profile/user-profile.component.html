@@ -7,10 +7,9 @@
       <div class="profile-header">
         <!-- Show Go Back only for normal users -->
         <i 
-          *ngIf="!viewerIsAdmin" 
-          class="fas fa-arrow-left back-arrow" 
-          (click)="goBack()">
-        </i>
+  class="fas fa-arrow-left back-arrow" 
+  (click)="goBack()">
+</i>
         <h2>{{ viewerIsAdmin ? 'User Profile' : 'My Profile' }}</h2>
       </div>
 
