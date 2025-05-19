@@ -1,5 +1,3 @@
-/* admin-dashboard.component.css */
-
 .admin-dashboard {
     display: flex;
     height: 100vh;
@@ -84,12 +82,10 @@
   /* Time slot section styling */
 .reservations {
   display: flex;
-  flex-wrap: wrap; /* allow wrapping */
-  align-items: flex-start;
+  align-items: flex-start; /* ✅ align cards to the top */
   gap: 16px;
   padding-bottom: 20px;
 }
-
 
 .timeslot {
   min-width: 213px; /* was 140px — increase as needed */
@@ -469,11 +465,9 @@
     gap: 16px;
   }
 
-  .timeslot {
+   .timeslot {
     width: 100%;
-    max-width: 100%;
     min-width: auto;
-    box-sizing: border-box;
   }
 
   .booking-card {
@@ -494,4 +488,3 @@
     padding: 20px;
   }
 }
-
