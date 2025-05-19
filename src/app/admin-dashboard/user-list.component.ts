@@ -28,13 +28,38 @@ export class UserListComponent implements OnInit {
     );
   }
 
+  
+
   loadUsers() {
     const storedUsers: User[] = this.userService.getAllUsers();
-    this.users = storedUsers.map(user => ({
-      ...user,
-      joined: user.joinedOn || 'N/A',
-      status: user.status || 'Active'
-    }));
+    const bookingStorage = JSON.parse(localStorage.getItem('Cancelledbookings') || '{}');
+
+    this.users = storedUsers.map(user => {
+      const storedStatus = bookingStorage[user.email]?.status;
+      return {
+        ...user,
+        joined: user.joinedOn || 'N/A',
+        status: storedStatus || user.status || 'Active'
+      };
+    });
+  }
+
+  deleteUser(email: string) {
+    const user = this.users.find(u => u.email === email);
+    if (!user) return;
+
+    // Toggle status instead of hard deleting
+    user.status = user.status === 'Active' ? 'Deleted' : 'Active';
+
+    // Update localStorage.booking
+    const bookingStorage = JSON.parse(localStorage.getItem('Cancelledbookings') || '{}');
+    bookingStorage[email] = {
+      ...(bookingStorage[email] || {}),
+      status: user.status
+    };
+    localStorage.setItem('Cancelledbookings', JSON.stringify(bookingStorage));
+
+    console.log(`User ${email} status changed to: ${user.status}`);
   }
 
   goToUserProfile(email: string) {

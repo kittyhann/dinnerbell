@@ -15,11 +15,18 @@
 
       <div class="avatar-wrapper">
         <img [src]="previewUrl || user.avatarUrl" alt="Profile Picture" class="avatar" />
+        <!-- Only non-admin users can edit the avatar -->
         <span 
           class="edit-avatar" 
-          *ngIf="!isAdmin" 
+          *ngIf="!viewerIsAdmin" 
           (click)="triggerFileInput(fileInput)">✎</span>
-        <input type="file" #fileInput accept="image/*" (change)="onFileSelected($event)" hidden />
+        <input 
+          type="file" 
+          #fileInput 
+          accept="image/*" 
+          (change)="onFileSelected($event)" 
+          hidden 
+        />
       </div>
 
       <form>

@@ -87,31 +87,36 @@
 @media (max-width: 768px) {
   .menu-toggle {
     display: block;
-    z-index: 1001;
+    position: fixed;
+    top: 0.75rem;
+    right: 1.25rem;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    z-index: 1101;
+    cursor: pointer;
   }
 
-  /* Blurred effect for the logo text and navbar background */
-  .navbar.blurred .logo {
-    filter: blur(5px); /* Apply blur effect to the logo text */
-    transition: filter 0.3s ease-in-out; /* Smooth transition for blur effect */
-  }
-
-  /* Overlay Effect */
   .overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Gray with transparency */
-    backdrop-filter: blur(5px); /* Optional: Adds blur effect */
-    z-index: 900; /* Behind the hamburger but in front of main content */
-    display: none; /* Initially hidden */
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 900;
+    display: none;
+    transition: opacity 0.3s ease;
   }
 
-  /* Display Overlay When Navbar is Open */
   .overlay.active {
     display: block;
+  }
+
+  .navbar.blurred .logo {
+    filter: blur(4px);
+    transition: filter 0.3s ease-in-out;
   }
 
   .nav-links {
@@ -119,103 +124,93 @@
     top: 0;
     right: 0;
     height: 100vh;
-    width: 45%;
+    width: 70vw;
+    max-width: 300px;
     background: white;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 2rem 1.5rem;
+    align-items: flex-start;
+    padding: 4rem 1.5rem 1.5rem;
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    font-size: 13px;
-    padding-left: 1.5rem; /* Keep this if links align well */
   }
 
   .nav-links.active {
-    transform: translateX(0%);
-    padding-top: 3rem; /* Added gap for X above the links */
+    transform: translateX(0);
   }
 
   .nav-links li {
     width: 100%;
-    margin-bottom: 0.5rem; /* Less space between items */
+    margin-bottom: 1rem;
   }
 
   .nav-links li a,
   .btn-signin,
   .btn-signup {
-    font-size: 13px;
+    font-size: 14px;
+  }
+
+  .auth-buttons {
+    margin-top: 2rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   .btn-signin,
-.btn-signup {
-  width: 66%;                  /* Make them same width */
-  padding: 0.6rem 0.8rem;
-  border: 1px solid black;
-  background: none;
-  cursor: pointer;
-  border-radius: 4px;
-  text-align: center;  
-  transition: all 0.3s ease;
-}
-
-
-  .auth-buttons {
-    margin-top: 22rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-start;
-    width: 100%; /* match full width like li */
+  .btn-signup {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid black;
+    background: none;
+    color: black;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    text-align: center;
   }
-  
-  
 
-  /* Hover effect for buttons */
-  /* Actual hover effect */
-.btn-signin:hover,
-.btn-signup:hover {
-  background: black;
-  color: white;
-}
-
-/* Active button style (manually toggled) */
-.btn-active {
-  background: black;
-  color: white;
-}
-
-  .separator {
-    margin: 1rem 0;
+  .btn-signin:hover,
+  .btn-signup:hover,
+  .btn-active {
+    background: black;
+    color: white;
   }
 
   .user-info {
+    margin-top: auto;
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    margin-top: auto;
-    padding-top: 0.5rem;
+    gap: 0.5rem;
   }
 
   .profile-content {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
 
   .nav-avatar {
     width: 28px;
     height: 28px;
+    border-radius: 50%;
+  }
+
+  .separator {
+    margin: 1rem 0;
+    width: 100%;
+    border-top: 1px solid #ddd;
   }
 
   body.menu-open {
+    overflow: hidden;
     position: fixed;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     touch-action: none;
   }
-
-  
 }
+

@@ -33,6 +33,7 @@ export class UserProfileComponent implements OnInit {
   showCancelModal = false;
   cancelTargetId: string | null = null;
   viewerIsAdmin: boolean = false;
+  
 
   constructor(
     public userService: UserService,
@@ -46,62 +47,78 @@ export class UserProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const emailFromRoute = this.route.snapshot.paramMap.get('email');
+  const emailFromRoute = this.route.snapshot.paramMap.get('email');
 
-    if (emailFromRoute) {
-      // Admin is viewing someone else's profile
-      this.viewerIsAdmin = true;
+  if (emailFromRoute) {
+    // Admin is viewing someone else's profile
+    this.viewerIsAdmin = true;
 
-      const allUsers = this.userService.getAllUsers();
-      const foundUser = allUsers.find(u => u.email === emailFromRoute);
+    const allUsers = this.userService.getAllUsers();
+    const foundUser = allUsers.find(u => u.email === emailFromRoute);
 
-      if (!foundUser) {
-        if (isPlatformBrowser(this.platformId)) {
-          alert('User not found');
-        }
-        this.router.navigate(['/admin-dashboard/user-list']);
-        return;
+    if (!foundUser) {
+      if (isPlatformBrowser(this.platformId)) {
+        alert('User not found');
       }
+      this.router.navigate(['/admin-dashboard/user-list']);
+      return;
+    }
 
+    this.user = {
+      ...this.user,
+      ...foundUser,
+      avatarUrl: foundUser.avatarUrl || 'assets/default-avatar.jpg',
+      bookings: foundUser.bookings || [],
+      joinedOn: foundUser.joinedOn || new Date().toISOString().split('T')[0],
+      status: foundUser.status || 'Active',
+      role: foundUser.role || 'user'
+    };
+
+    // ✅ Sync status from localStorage if available
+    const bookingStorage = JSON.parse(localStorage.getItem('Cancelledbookings') || '{}');
+    const storedStatus = bookingStorage[emailFromRoute]?.status;
+    if (storedStatus) {
+      this.user.status = storedStatus;
+    }
+
+    this.refreshBookingsDisplay();
+
+  } else {
+    // User is viewing their own profile
+    if (!this.userService.isLoggedIn()) {
+      if (isPlatformBrowser(this.platformId)) {
+        alert('Please sign in first to view your profile.');
+      }
+      this.router.navigate(['/']);
+      return;
+    }
+
+    const currentUser = this.userService.getUser();
+    if (currentUser) {
       this.user = {
         ...this.user,
-        ...foundUser,
-        avatarUrl: foundUser.avatarUrl || 'assets/default-avatar.jpg',
-        bookings: foundUser.bookings || [],
-        joinedOn: foundUser.joinedOn || new Date().toISOString().split('T')[0],
-        status: foundUser.status || 'Active',
-        role: foundUser.role || 'user'
+        ...currentUser,
+        avatarUrl: currentUser.avatarUrl || 'assets/default-avatar.jpg',
+        bookings: currentUser.bookings || [],
+        joinedOn: currentUser.joinedOn || new Date().toISOString().split('T')[0],
+        status: currentUser.status || 'Active',
+        role: currentUser.role || 'user'
       };
 
+      // ✅ Sync status from localStorage if available
+      const bookingStorage = JSON.parse(localStorage.getItem('booking') || '{}');
+      const storedStatus = bookingStorage[this.user.email]?.status;
+      if (storedStatus) {
+        this.user.status = storedStatus;
+      }
+
+      this.viewerIsAdmin = currentUser.role === 'admin';
+      this.userService.setUser(this.user);
       this.refreshBookingsDisplay();
-    } else {
-      // User is viewing their own profile
-      if (!this.userService.isLoggedIn()) {
-        if (isPlatformBrowser(this.platformId)) {
-          alert('Please sign in first to view your profile.');
-        }
-        this.router.navigate(['/']);
-        return;
-      }
-
-      const currentUser = this.userService.getUser();
-      if (currentUser) {
-        this.user = {
-          ...this.user,
-          ...currentUser,
-          avatarUrl: currentUser.avatarUrl || 'assets/default-avatar.jpg',
-          bookings: currentUser.bookings || [],
-          joinedOn: currentUser.joinedOn || new Date().toISOString().split('T')[0],
-          status: currentUser.status || 'Active',
-          role: currentUser.role || 'user'
-        };
-
-        this.viewerIsAdmin = currentUser.role === 'admin';
-        this.userService.setUser(this.user);
-        this.refreshBookingsDisplay();
-      }
     }
   }
+}
+
 
   refreshBookingsDisplay(): void {
     this.bookings = this.user.bookings.map(b => ({
@@ -136,6 +153,7 @@ export class UserProfileComponent implements OnInit {
     const weeks = Math.floor(days / 7);
     return `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
   }
+  
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -153,32 +171,49 @@ export class UserProfileComponent implements OnInit {
   triggerFileInput(input: HTMLInputElement): void {
     input.click();
   }
+  toggleUserStatus(): void {
+  this.user.status = this.user.status === 'Active' ? 'Deleted' : 'Active';
+  this.userService.setUser(this.user); // Optional: update temp state
+}
 
-  async saveChanges(): Promise<void> {
-    this.loading = true;
-    try {
-      if (!this.isAdmin && this.selectedFile) {
-        const uploadedUrl = await this.userService.uploadProfilePicture(this.selectedFile);
-        this.user.avatarUrl = uploadedUrl;
-      }
-
-      this.userService.setUser(this.user);
-
-      if (isPlatformBrowser(this.platformId)) {
-        alert(this.isAdmin ? 'Status updated successfully!' : 'Profile updated successfully!');
-      }
-
-      this.selectedFile = null;
-      this.previewUrl = null;
-    } catch {
-      if (isPlatformBrowser(this.platformId)) {
-        alert('Failed to update profile.');
-      }
-    } finally {
-      this.loading = false;
+ async saveChanges(): Promise<void> {
+  this.loading = true;
+  try {
+    // Only upload image for non-admin
+    if (!this.isAdmin && this.selectedFile) {
+      const uploadedUrl = await this.userService.uploadProfilePicture(this.selectedFile);
+      this.user.avatarUrl = uploadedUrl;
     }
-  }
 
+    // Admin-specific save
+    if (this.viewerIsAdmin) {
+      this.userService.updateUserByEmail(this.user.email, this.user);
+
+      // 💾 Save status to localStorage (as part of booking data)
+      const storedBookings = JSON.parse(localStorage.getItem('Cancelledbookings') || '{}');
+      storedBookings[this.user.email] = {
+        ...(storedBookings[this.user.email] || {}),
+        status: this.user.status
+      };
+      localStorage.setItem('Cancelledbookings', JSON.stringify(storedBookings));
+    } else {
+      this.userService.setUser(this.user);
+    }
+
+    if (isPlatformBrowser(this.platformId)) {
+      alert(this.viewerIsAdmin ? 'Status updated successfully!' : 'Profile updated successfully!');
+    }
+
+    this.selectedFile = null;
+    this.previewUrl = null;
+  } catch {
+    if (isPlatformBrowser(this.platformId)) {
+      alert('Failed to update profile.');
+    }
+  } finally {
+    this.loading = false;
+  }
+}
   goBack(): void {
     if (this.viewerIsAdmin) {
       this.router.navigate(['/admin-dashboard/user-list']);

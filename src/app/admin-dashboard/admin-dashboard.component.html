@@ -1,7 +1,6 @@
 <div class="admin-dashboard">
   <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="logo">🍕</div>
     <nav>
       <ul>
         <li title="Reservations" (click)="showUserList = false"><i class="fas fa-calendar"></i></li>
@@ -42,12 +41,12 @@
           <div class="timeslot">
             <h4>{{ slot.time }} PM</h4>
 
-            <div class="booking-card" *ngFor="let booking of getFilteredBookings(slot)">
-              <div class="booking-info">
-                <p>{{ booking.name }}<br />👥 {{ booking.seats }}</p>
-                <button class="release-btn" (click)="releaseBooking(booking, slot.time)">Release</button>
-              </div>
-            </div>
+           <div class="booking-card" *ngFor="let booking of getFilteredBookings(slot)">
+          <div class="booking-info">
+            <p>{{ booking.name }}<br />👥 {{ booking.seats }}</p>
+            <button class="release-btn" (click)="releaseBooking(booking, slot.time)">Release</button>
+          </div>
+        </div>
 
             <p class="seats-left">
               {{ getTotalSeats(slot) }}/{{ maxSeats }}
@@ -63,41 +62,63 @@
       </section>
 
       <!-- Reservation Modal -->
-      <div class="modal" *ngIf="showReservationModal">
-        <div class="modal-content">
-          <h3>Make a Reservation</h3>
-          <label>Full Name</label>
-          <input [(ngModel)]="newBooking.name" placeholder="Full Name" />
+<div class="modal" *ngIf="showReservationModal">
+  <div class="reservation-card">
+    <h3>Make a Reservation</h3>
 
-          <label>Mobile Number</label>
-          <input [(ngModel)]="newBooking.phone" placeholder="Mobile Number" />
+    <label>Full Name</label>
+    <input [(ngModel)]="newBooking.name" placeholder="Full Name" />
 
-          <label>Email Address (Optional)</label>
-          <input [(ngModel)]="newBooking.email" placeholder="Email Address" />
+    <label>Mobile Number</label>
+    <input [(ngModel)]="newBooking.phone" placeholder="Mobile Number" />
 
-          <label>Guests</label>
-          <select [(ngModel)]="newBooking.seats">
-            <option *ngFor="let i of [].constructor(availableSeats); let index = index" [value]="index + 1">
-              {{ index + 1 }}
-            </option>
-          </select>
+    <label>Email Address (Optional)</label>
+    <input [(ngModel)]="newBooking.email" placeholder="Email Address" />
 
-          <div class="modal-actions">
-            <button (click)="confirmReservation()">Reserve Now</button>
-            <button (click)="closeReservationModal()">Cancel</button>
-          </div>
-        </div>
-      </div>
+    <label>Guests</label>
+    <div class="guest-select">
+      <select [(ngModel)]="newBooking.seats">
+        <option *ngFor="let i of [].constructor(availableSeats); let index = index" [value]="index + 1">
+          {{ index + 1 }}
+        </option>
+      </select>
+    </div>
 
-      <!-- Success Modal -->
-      <div class="modal" *ngIf="showSuccessModal">
-        <div class="modal-content">
-          <h3>✅ Table Booked Successfully</h3>
-          <p>{{ newBooking.name }} - {{ newBooking.phone }}</p>
-          <p>📅 {{ reservationDate }} | 🕛 {{ selectedTimeSlot }} PM | 👥 {{ newBooking.seats }} Guests</p>
-          <button (click)="closeSuccessModal()">Done</button>
-        </div>
-      </div>
-    </ng-container>
-  </main>
+    <div class="modal-actions">
+      <button class="primary" (click)="confirmReservation()">Reserve Now</button>
+      <button class="secondary" (click)="closeReservationModal()">Cancel</button>
+    </div>
+  </div>
 </div>
+
+
+<!-- Success Modal -->
+<div class="modal" *ngIf="showSuccessModal">
+  <div class="success-card">
+
+    <!-- Black checkmark using Font Awesome -->
+    <div class="check-icon"><i class="fas fa-check-circle"></i></div>
+
+    <h3>Table Booked Successfully</h3>
+
+    <!-- Underlined section -->
+    <div class="underline-block">
+      <div class="underline-line"></div>
+      <p><strong>{{ newBooking.name }}</strong> - {{ newBooking.phone }}</p>
+      <div class="underline-line"></div>
+    </div>
+
+    <!-- Details line with black icons -->
+    <p class="details-line">
+      <i class="fas fa-calendar-alt icon"></i> {{ reservationDate }} |
+      <i class="fas fa-clock icon"></i> {{ selectedTimeSlot }} PM |
+      <i class="fas fa-user-friends icon"></i> {{ newBooking.seats }} Guests
+    </p>
+
+    <!-- Done Button -->
+    <button class="done-btn" (click)="closeSuccessModal()">Done</button>
+
+  </div>
+</div>
+
+

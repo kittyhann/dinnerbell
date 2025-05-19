@@ -3,33 +3,41 @@
   background-color: #f5f5f5;
   min-height: 100vh;
   box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
+/* Add bottom space after search bar */
 .toolbar {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 24px; /* increased */
   gap: 10px;
 }
 
-.toolbar input {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 250px;
+.user-icon {
+  font-size: 18px;
+  color: #000;
 }
 
-.toolbar button {
-  padding: 8px 14px;
-  background-color: #000;
+.toolbar input {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  width: 220px;
+}
+
+
+.filter-btn {
+  padding: 7px 16px;
+  background-color: black;
   color: white;
   border: none;
   border-radius: 4px;
+  font-weight: 500;
   cursor: pointer;
-  transition: 0.2s ease;
 }
 
-.toolbar button:hover {
+.filter-btn:hover {
   background-color: #333;
 }
 
@@ -37,46 +45,190 @@
   width: 100%;
   border-collapse: collapse;
   background-color: white;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  table-layout: fixed;
+}
+
+.user-table thead {
+  background-color: #f8f9fa;
+}
+
+.user-table tr:hover {
+  background-color: #f1f1f1;
 }
 
 .user-table th,
 .user-table td {
-  padding: 12px 16px;
+  padding: 18px 14px; /* more vertical space */
   text-align: left;
-  border-bottom: 1px solid #ddd;
-  font-size: 14px;
+  border: none;
+  border-bottom: 1px solid black;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 
 .user-table thead {
-  background-color: #f0f0f0;
+  background-color: #f8f9fa;
 }
 
-.user-table tr:last-child td {
-  border-bottom: none;
+.user-table tr:hover {
+  background-color: #f1f1f1;
 }
 
-.user-table button {
-  background: transparent;
-  border: none;
-  color: #007bff;
-  cursor: pointer;
-  font-size: 14px;
-  text-decoration: underline;
-  padding: 4px 6px;
+.user-table td:last-child {
+  text-align: right;  /* pushes contents right without breaking borders */
+  padding-right: 20px; /* some breathing room */
 }
 
-.user-table button:hover {
-  color: #0056b3;
-}
 
-/* Status styling */
+/* Status Colors */
 .active {
   color: green;
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .deleted {
   color: red;
-  font-weight: 600;
+  font-weight: bold;
 }
+
+/* See Profile link */
+.see-profile {
+  background: none;
+  border: none;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+}
+
+.see-profile:hover {
+  color: #0056b3;
+}
+
+.action-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Delete Icon */
+.delete-btn {
+  background: none;
+  border: none;
+  color: #d9534f;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  margin-left: 0; /* push it right */
+}
+
+.delete-btn:hover {
+  color: #c9302c;
+}
+
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 600px) {
+  .user-list-container {
+    padding: 12px 10px;
+  }
+
+  /* Toolbar stack & full width input */
+  .toolbar {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .user-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    color: #000;
+  }
+
+  .toolbar input {
+    flex: 1;
+    min-width: 0; /* allow shrinking */
+    font-size: 16px;
+    padding: 10px 12px;
+    border-radius: 4px;
+  }
+
+  /* Make the table horizontally scrollable */
+/* Hide the table headers on mobile for cleaner card style */
+  .user-table thead {
+    display: none;
+  }
+
+  /* Make each row a card */
+  .user-table tbody tr {
+    display: block;
+    margin-bottom: 16px;
+    background: white;
+    padding: 14px 16px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  }
+
+  /* Each cell stacks with label before the content */
+  .user-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border: none;
+    font-size: 14px;
+    white-space: normal;
+  }
+  .user-table tbody tr {
+  /* Remove these to get rid of white card background */
+  background: transparent; /* or just delete */
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0; /* or adjust to fit your needs */
+  padding-left: 20px;  /* add more space on the left */
+    padding-right: 20px; 
+}
+
+
+  /* Label for each cell - insert with ::before */
+  .user-table tbody td:nth-child(1)::before { content: "Name:"; font-weight: 600; }
+  .user-table tbody td:nth-child(2)::before { content: "Mobile No:"; font-weight: 600; }
+  .user-table tbody td:nth-child(3)::before { content: "Email Address:"; font-weight: 600; }
+  .user-table tbody td:nth-child(4)::before { content: "Date Joined:"; font-weight: 600; }
+  .user-table tbody td:nth-child(5)::before { content: "Status:"; font-weight: 600; }
+  .user-table tbody td:nth-child(6)::before { content: "Profile:"; font-weight: 600; }
+  .user-table tbody td:nth-child(7)::before { content: ""; font-weight: 600; }
+
+  /* Push the label and content apart */
+  .user-table tbody td::before {
+    flex: 1 0 40%;
+    color: #555;
+  }
+
+  .user-table tbody td {
+    flex-wrap: nowrap;
+  }
+
+  /* Action buttons aligned right */
+  .user-table tbody td:nth-child(6),
+  .user-table tbody td:nth-child(7) {
+    justify-content: flex-end;
+    flex: 1 0 auto;
+  }
+
+  /* See profile & delete button spacing */
+  .see-profile {
+    font-size: 14px;
+  }
+
+  .delete-btn {
+    font-size: 18px;
+    margin-left: 8px;
+  }
+}
+

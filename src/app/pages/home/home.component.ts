@@ -34,20 +34,35 @@ export class HomeComponent implements OnDestroy {
   minDate: string = '';
 
   constructor(public userService: UserService) {
-    this.userSubscription = this.userService.user$.subscribe(user => {
-      this.isLoggedIn = !!user;
-    });
+  this.userSubscription = this.userService.user$.subscribe(user => {
+    this.isLoggedIn = !!user;
+  });
 
-    const now = new Date();
-    this.selectedDate = now.toISOString().split('T')[0];
-    this.minDate = this.selectedDate;
+  const now = new Date();
+  this.selectedDate = now.toISOString().split('T')[0];
+  this.minDate = this.selectedDate;
 
-    const hour = now.getHours();
-    const roundedHour = Math.min(23, Math.max(16, Math.ceil(hour + 1)));
-    const isPM = roundedHour >= 12;
-    const displayHour = ((roundedHour + 11) % 12 + 1);
-    this.selectedTime = `${displayHour.toString().padStart(2, '0')}:00 ${isPM ? 'PM' : 'AM'}`;
+  // Get the current hour in 24h format
+  let hour = now.getHours();
+
+  // Clamp hour between 16 (4 PM) and 23 (11 PM)
+  if (hour < 16) {
+    hour = 16;
+  } else if (hour >= 23) {
+    hour = 23;
+  } else {
+    // Round up to next whole hour if not already exact
+    if (now.getMinutes() > 0) {
+      hour = Math.min(23, hour + 1);
+    }
   }
+
+  // Convert to 12-hour format without AM (all PM)
+  const displayHour = hour > 12 ? hour - 12 : hour; // 13->1 PM, 16->4 PM etc.
+
+  this.selectedTime = `${displayHour}`;
+}
+
 
   bookTable() {
     if (this.isLoggedIn) {
@@ -59,19 +74,21 @@ export class HomeComponent implements OnDestroy {
   }
 
   onBookingConfirmed(data: any) {
-    this.bookingData = data;
-    this.showBookingForm = false;
-    this.showConfirmation = true;
+  this.bookingData = data;
+  this.showBookingForm = false;
+  this.showConfirmation = true;
 
-    // ✅ Add booking with required `id`
-    this.userService.addBooking({
-      id: this.generateId(),
-      status: 'Reserved',
-      date: this.selectedDate,
-      time: this.selectedTime,
-      guests: this.guests
-    });
-  }
+  this.userService.addBooking({
+    id: this.generateId(),
+    status: 'Reserved',
+    date: this.selectedDate,
+    time: this.selectedTime,
+    guests: this.guests
+  });
+}
+
+
+
 
   generateId(): string {
     return Math.random().toString(36).substring(2, 10);

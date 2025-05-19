@@ -1,11 +1,12 @@
-<div class="overlay" [class.active]="menuOpen"></div>
+<div class="overlay" [class.active]="menuOpen" (click)="closeMenu()"></div>
+
 <nav class="navbar" [class.blurred]="menuOpen">
   <div class="logo">Welcome to <strong>DinnerBell</strong></div>
 
   <!-- Hamburger Icon -->
   <button class="menu-toggle" (click)="toggleMenu()">
-    <span *ngIf="!menuOpen">&#9776;</span> <!-- Hamburger Icon -->
-    <span *ngIf="menuOpen">✕</span> <!-- X Icon -->
+    <span *ngIf="!menuOpen">&#9776;</span>
+    <span *ngIf="menuOpen">✕</span>
   </button>
 
   <!-- Navigation Links -->
@@ -26,7 +27,7 @@
           </div>
         </a>
       </li>      
-    </ng-container>    
+    </ng-container>
 
     <ng-template #guest>
       <li class="separator"></li>
@@ -38,7 +39,6 @@
         >
           Sign In
         </button>
-      
         <button
           class="btn-signup"
           [ngClass]="{ 'btn-active': activeAuthBtn === 'signup' }"

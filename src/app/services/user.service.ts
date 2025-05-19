@@ -100,6 +100,9 @@ export class UserService {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(users));
     }
   }
+  setAllUsers(users: User[]): void {
+  localStorage.setItem('allUsers', JSON.stringify(users));
+}
 
   getAllUsers(): User[] {
     if (!this.isBrowser()) return [];
@@ -117,6 +120,14 @@ export class UserService {
     const stored = localStorage.getItem(this.CURRENT_USER_KEY);
     return stored ? JSON.parse(stored) : null;
   }
+  updateUserByEmail(email: string, updatedUser: User): void {
+  const users = this.getAllUsers();
+  const index = users.findIndex(u => u.email === email);
+  if (index !== -1) {
+    users[index] = { ...updatedUser }; // update in the array
+  }
+}
+
 
   removeRegisteredUser() {
     this.registeredUser = null;
@@ -154,6 +165,8 @@ export class UserService {
     }
   }
 
+  
+
   // ------------------------- Bookings -------------------------
 
   addBooking(booking: Booking) {
@@ -177,6 +190,9 @@ export class UserService {
       this.updateUser(user);
     }
   }
+  
+  
+  
 
   // ------------------------- Profile Picture -------------------------
 
