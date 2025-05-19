@@ -48,13 +48,17 @@ submitBooking() {
       timeToUse = (hourNum - 12).toString();  // Convert to 4-11 range string
     }
 
-    const newBooking = {
-      name: this.fullName,
-      number: this.mobileNumber,
-      guests: this.guests,
-      date: dateToUse,
-      time: timeToUse
-    };
+    const combinedDateTime = new Date(`${dateToUse}T${timeToUse.padStart(2, '0')}:00:00`);
+
+const newBooking = {
+  name: this.fullName,
+  number: this.mobileNumber,
+  guests: this.guests,
+  dateTime: combinedDateTime,
+  date: dateToUse,
+  time: timeToUse
+};
+
 
     // Save to localStorage
     try {

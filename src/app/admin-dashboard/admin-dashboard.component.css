@@ -84,10 +84,12 @@
   /* Time slot section styling */
 .reservations {
   display: flex;
-  align-items: flex-start; /* ✅ align cards to the top */
+  flex-wrap: wrap; /* allow wrapping */
+  align-items: flex-start;
   gap: 16px;
   padding-bottom: 20px;
 }
+
 
 .timeslot {
   min-width: 213px; /* was 140px — increase as needed */
@@ -469,7 +471,9 @@
 
   .timeslot {
     width: 100%;
+    max-width: 100%;
     min-width: auto;
+    box-sizing: border-box;
   }
 
   .booking-card {
