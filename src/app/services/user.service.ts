@@ -100,9 +100,10 @@ export class UserService {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(users));
     }
   }
+
   setAllUsers(users: User[]): void {
-  localStorage.setItem('allUsers', JSON.stringify(users));
-}
+    localStorage.setItem('allUsers', JSON.stringify(users));
+  }
 
   getAllUsers(): User[] {
     if (!this.isBrowser()) return [];
@@ -120,14 +121,17 @@ export class UserService {
     const stored = localStorage.getItem(this.CURRENT_USER_KEY);
     return stored ? JSON.parse(stored) : null;
   }
-  updateUserByEmail(email: string, updatedUser: User): void {
-  const users = this.getAllUsers();
-  const index = users.findIndex(u => u.email === email);
-  if (index !== -1) {
-    users[index] = { ...updatedUser }; // update in the array
-  }
-}
 
+  updateUserByEmail(email: string, updatedUser: User): void {
+    const users = this.getAllUsers();
+    const index = users.findIndex(u => u.email === email);
+    if (index !== -1) {
+      users[index] = { ...updatedUser }; // update in the array
+      if (this.isBrowser()) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(users));
+      }
+    }
+  }
 
   removeRegisteredUser() {
     this.registeredUser = null;
@@ -165,18 +169,35 @@ export class UserService {
     }
   }
 
-  
-
   // ------------------------- Bookings -------------------------
+
+  // New helper: get adminReservations from localStorage
+  getAdminReservations(): Booking[] {
+    if (!this.isBrowser()) return [];
+    const data = localStorage.getItem('adminReservations');
+    return data ? JSON.parse(data) : [];
+  }
+
+  // New helper: set adminReservations to localStorage
+  setAdminReservations(bookings: Booking[]) {
+    if (!this.isBrowser()) return;
+    localStorage.setItem('adminReservations', JSON.stringify(bookings));
+  }
 
   addBooking(booking: Booking) {
     const user = this.getUser();
     if (!user) return;
 
+    // Add booking to user's bookings
     user.bookings = user.bookings || [];
     user.bookings.unshift(booking);
     this.setUser(user);
     this.updateUser(user);
+
+    // Add booking to global adminReservations in localStorage
+    const adminReservations = this.getAdminReservations();
+    adminReservations.push(booking);
+    this.setAdminReservations(adminReservations);
   }
 
   removeBooking(booking: Booking) {
@@ -189,10 +210,14 @@ export class UserService {
       this.setUser(user);
       this.updateUser(user);
     }
+
+    // Also remove from adminReservations
+    let adminReservations = this.getAdminReservations();
+    adminReservations = adminReservations.filter(b =>
+      !(b.date === booking.date && b.time === booking.time && b.guests === booking.guests)
+    );
+    this.setAdminReservations(adminReservations);
   }
-  
-  
-  
 
   // ------------------------- Profile Picture -------------------------
 

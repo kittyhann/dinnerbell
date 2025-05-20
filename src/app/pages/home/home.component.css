@@ -179,6 +179,12 @@
   border-radius: 6px;
   cursor: pointer;
 }
+.time-slots span.full {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
 
 .time-slots span.active {
   background: black;

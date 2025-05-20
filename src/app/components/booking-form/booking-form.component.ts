@@ -33,43 +33,30 @@ export class BookingPopupComponent {
 submitBooking() {
   if (this.fullName && this.mobileNumber) {
     const dateToUse = this.selectedDate || this.currentDate.toISOString().split('T')[0];
+    const timeToUse = this.selectedTime || '04:00 PM'; // fallback if no selected time
 
-    // Extract only hour number from selectedTime if available, otherwise use default
-    let timeToUse = this.selectedTime || this.defaultTime;
+    // Always save time formatted as "HH:mm PM"
+    // If timeToUse is like "5" or "05:00 PM", normalize it
+    const formattedTime = this.formatTimeSlot(timeToUse);
 
-    // If selectedTime is in "05:00 PM" format, parse it to just the hour number (e.g. "5")
-    if (timeToUse.includes(':')) {
-      const hourPart = timeToUse.split(':')[0];
-      let hourNum = parseInt(hourPart, 10);
-      // If PM and hour < 12, convert to 12-23 range
-      if (timeToUse.toUpperCase().includes('PM') && hourNum < 12) {
-        hourNum += 12;
-      }
-      timeToUse = (hourNum - 12).toString();  // Convert to 4-11 range string
-    }
+    const newBooking = {
+      name: this.fullName,
+      number: this.mobileNumber,
+      guests: this.guests,
+      date: dateToUse,
+      time: formattedTime
+    };
 
-    const combinedDateTime = new Date(`${dateToUse}T${timeToUse.padStart(2, '0')}:00:00`);
-
-const newBooking = {
-  name: this.fullName,
-  number: this.mobileNumber,
-  guests: this.guests,
-  dateTime: combinedDateTime,
-  date: dateToUse,
-  time: timeToUse
-};
-
-
-    // Save to localStorage
+    // Save to localStorage using the SAME key as HomeComponent expects
     try {
-      const stored = localStorage.getItem('booking');
+      const stored = localStorage.getItem('adminReservations');
       const existing = stored ? JSON.parse(stored) : [];
 
       if (Array.isArray(existing)) {
         existing.push(newBooking);
-        localStorage.setItem('booking', JSON.stringify(existing));
+        localStorage.setItem('adminReservations', JSON.stringify(existing));
       } else {
-        localStorage.setItem('booking', JSON.stringify([newBooking]));
+        localStorage.setItem('adminReservations', JSON.stringify([newBooking]));
       }
     } catch (error) {
       console.error('Failed to save booking to localStorage:', error);
@@ -80,5 +67,18 @@ const newBooking = {
     alert('Please fill in all fields.');
   }
 }
+
+// Add this helper method in BookingPopupComponent:
+formatTimeSlot(time: string): string {
+  if (!time) return '';
+  const [timePart, meridian] = time.split(' ');
+  if (!timePart || !meridian) return '';
+  let [hour, minutes] = timePart.split(':');
+  if (hour.length === 1) {
+    hour = '0' + hour;
+  }
+  return `${hour}:${minutes} ${meridian}`;
+}
+
 
 }

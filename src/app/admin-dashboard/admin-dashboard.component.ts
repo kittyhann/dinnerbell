@@ -233,45 +233,56 @@ releaseBooking(bookingToRemove: { name: string; seats: number }, time: string) {
     this.showReservationModal = true;
   }
 
-  saveReservationsToStorage() {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('adminReservations', JSON.stringify(this.reservations));
-    }
+saveReservationsToStorage() {
+  if (isPlatformBrowser(this.platformId)) {
+    // Flatten the reservations structure to match the expected booking format
+    const flatReservations = this.reservations.flatMap(res =>
+      res.bookings.map(b => ({
+        date: res.date,
+        time: res.time,
+        name: b.name,
+        guests: b.seats
+      }))
+    );
+
+    localStorage.setItem('adminReservations', JSON.stringify(flatReservations));
   }
+}
+
 
   closeReservationModal() {
     this.showReservationModal = false;
   }
 
-  confirmReservation() {
-    let slot = this.reservations.find(
-      r => r.date === this.reservationDate && r.time === this.selectedTimeSlot
-    );
+confirmReservation() {
+  let slot = this.reservations.find(
+    r => r.date === this.reservationDate && r.time === this.selectedTimeSlot
+  );
 
-    const newSeats = Number(this.newBooking.seats);
-    if (!slot) {
-      slot = {
-        date: this.reservationDate,
-        time: this.selectedTimeSlot,
-        bookings: []
-      };
-      this.reservations.push(slot);
-    }
-
-    const totalSeats = this.getTotalSeats(slot);
-    if (totalSeats + newSeats <= this.maxSeats) {
-      slot.bookings.push({
-        name: this.newBooking.name,
-        seats: newSeats
-      });
-
-      this.saveReservationsToStorage();
-      this.showReservationModal = false;
-      this.showSuccessModal = true;
-    } else {
-      alert(`Cannot add ${newSeats} guests. Only ${this.maxSeats - totalSeats} seats remaining.`);
-    }
+  const newSeats = Number(this.newBooking.seats);
+  if (!slot) {
+    slot = {
+      date: this.reservationDate,
+      time: this.selectedTimeSlot,
+      bookings: []
+    };
+    this.reservations.push(slot);
   }
+
+  const totalSeats = this.getTotalSeats(slot);
+  if (totalSeats + newSeats <= this.maxSeats) {
+    slot.bookings.push({
+      name: this.newBooking.name,
+      seats: newSeats
+    });
+
+    this.saveReservationsToStorage();
+    this.showReservationModal = false;
+    this.showSuccessModal = true;
+  } else {
+    alert(`Cannot add ${newSeats} guests. Only ${this.maxSeats - totalSeats} seats remaining.`);
+  }
+}
 
  getTotalSeats(slot: { bookings: { name: string; seats: number }[]; time: string }): number {
   if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
@@ -301,4 +312,5 @@ releaseBooking(bookingToRemove: { name: string; seats: number }, time: string) {
   closeSuccessModal() {
     this.showSuccessModal = false;
   }
+
 }

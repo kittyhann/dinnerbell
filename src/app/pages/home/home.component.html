@@ -2,23 +2,30 @@
 
 <div class="home-container">
   <div class="card">
+    <!-- Image -->
     <div class="image-wrapper">
       <img src="assets/restaurant3.jpg" alt="Restaurant" class="main-image" />
     </div>
 
+    <!-- Restaurant Info -->
     <div class="info">
-      <h2 class="restaurant-heading">DinnerBell <span class="subtext">Restaurant & Bar</span></h2>
+      <h2 class="restaurant-heading">
+        DinnerBell <span class="subtext">Restaurant & Bar</span>
+      </h2>
+
       <div class="info-columns">
         <div class="left-info">
           <p class="with-icon">
             <span class="fas fa-map-marker-alt icon-left"></span>
-            1390 Manila Bay Avenue, Suite 210<br />Makati City, Metro Manila 1226
+            1390 Manila Bay Avenue, Suite 210<br />
+            Makati City, Metro Manila 1226
           </p>
           <p class="with-icon">
             <span class="fas fa-clock icon-left"></span>
             4:00 PM - 11:00 PM
           </p>
         </div>
+
         <div class="right-info">
           <p class="with-icon">
             <span class="fas fa-bars icon-left"></span>
@@ -28,31 +35,43 @@
       </div>
     </div>
 
+    <!-- Booking Form -->
     <div class="form-row-booking">
       <div class="inputs-group">
         <label>Date:</label>
-        <input type="date" [(ngModel)]="selectedDate" [min]="minDate" />
+        <input type="date" [(ngModel)]="selectedDate" [min]="minDate" (change)="calculateAvailability()" />
 
         <label>Time:</label>
         <select [(ngModel)]="selectedTime">
-          <option>04:00 PM</option>
-          <option>05:00 PM</option>
-          <option>06:00 PM</option>
-          <option>07:00 PM</option>
-          <option>08:00 PM</option>
-          <option>09:00 PM</option>
-          <option>10:00 PM</option>
-          <option>11:00 PM</option>
+          <option
+            *ngFor="let time of timeSlots"
+            [value]="time"
+            [disabled]="availableSeatsPerSlot[time] <= 0"
+          >
+            {{ time }}
+          </option>
         </select>
 
-        <label>People:</label>
-        <input type="number" min="1" max="20" [(ngModel)]="guests" />
+          <label>People:</label>
+          <select [(ngModel)]="guests">
+            <option *ngFor="let option of getAvailableGuestOptions()" [value]="option">
+              {{ option }}
+            </option>
+          </select>
+          <small *ngIf="availableSeatsPerSlot[selectedTime] === 0">
+            Table Full. No seats available.
+          </small>
+
       </div>
+        <button class="book-btn" 
+                [disabled]="availableSeatsPerSlot[selectedTime] <= 0"
+                (click)="bookTable()">
+          Book a Table
+        </button>
 
-      <button class="book-btn" (click)="bookTable()">Book a Table</button>
-    </div>
+</div>
 
-    <!-- Booking Popup -->
+    <!-- Booking Popup -->  
     <app-booking-form
       *ngIf="showBookingForm"
       [selectedDate]="selectedDate"
@@ -68,18 +87,24 @@
       [booking]="bookingData"
       (close)="showConfirmation = false">
     </app-booked-confirmation>
-    
 
+    <!-- Time Slot Availability -->
     <div class="time-slots-header">Available Time Slots</div>
     <div class="time-slots">
-      <span class="active">04:00 PM</span>
-      <span class="active">05:00 PM</span>
-      <span class="active">06:00 PM</span>
-      <span class="active">07:00 PM</span>
-      <span class="active">08:00 PM</span>
-      <span class="active">09:00 PM</span>
-      <span class="active">10:00 PM</span>
-      <span class="active">11:00 PM</span>
+      <span
+        *ngFor="let slot of timeSlots"
+        [class.full]="availableSeatsPerSlot[slot] <= 0"
+        [class.active]="availableSeatsPerSlot[slot] > 0"
+      >
+        {{ slot }} -
+        <small>
+          {{
+            availableSeatsPerSlot[slot] > 0
+              ? (maxSeatsPerSlot - availableSeatsPerSlot[slot]) + '/' + maxSeatsPerSlot
+              : 'Table Full'
+          }}
+        </small>
+      </span>
     </div>
   </div>
 </div>
