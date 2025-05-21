@@ -13,6 +13,6 @@ export default `<!doctype html>
 <body ngcm="">
   <base href="/dinnerbell/">
   <app-root></app-root>
-<script src="polyfills-FFHMD2TL.js" type="module"></script><script src="main-JQ3KGLGT.js" type="module"></script></body>
+<script src="polyfills-FFHMD2TL.js" type="module"></script><script src="main-ECRV7CCL.js" type="module"></script></body>
 </html>
 `;

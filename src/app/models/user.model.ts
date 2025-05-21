@@ -2,15 +2,18 @@
 
 export interface Booking {
   id: string;
+  userId: string;
+  email: string;
+  name: string;
   date: string;
   time: string;
   guests: number;
-  status: 'Reserved' | 'Cancelled' | 'Completed';
-  
+  status: 'Reserved' | 'Cancelled' | 'Completed' | 'Deleted';
 }
 
 // In user.model.ts
 export interface User {
+    id: string;
     email: string;
     name: string;
     phone: string;
@@ -21,6 +24,5 @@ export interface User {
     joinedOn?: string;
     status?: 'Active' | 'Deleted';
   }
-  
-  
-  
+
+

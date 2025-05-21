@@ -3,7 +3,7 @@
     height: 100vh;
     font-family: 'Segoe UI', sans-serif;
   }
-  
+
   .sidebar {
     width: 60px;
     background-color: #1e1e1e;
@@ -13,18 +13,18 @@
     align-items: center;
     padding: 10px 0;
   }
-  
+
   .sidebar .logo {
     font-size: 24px;
     margin-bottom: 20px;
   }
-  
+
   .sidebar ul {
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  
+
   .sidebar li {
   margin: 30px 0;
   cursor: pointer;
@@ -40,7 +40,7 @@
     overflow-y: auto;
     background-color: #f0f0f0;
   }
-  
+
   /* Enhance toolbar for top filters */
 .toolbar {
   /*background: white;*/
@@ -71,14 +71,14 @@
   font-size: 14px;
   background-color: white;
 }
-  
+
   .admin-profile img {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
   }
-  
+
   /* Time slot section styling */
 .reservations {
   display: flex;
@@ -106,7 +106,7 @@
   display: block;
   width: 100%;            /* ✅ ensure it's block-level and full width */
 }
-  
+
  /* Booking card style */
 .booking-card {
   background-color: #f7f7f7;
@@ -139,7 +139,7 @@
   width: 100%;          /* spans full width to center text */
 }
 
-  
+
   .booking-info {
   display: flex;
   justify-content: space-between;
@@ -155,7 +155,7 @@
   flex: 1;
 }
 
-  
+
   /* Reserve Table button */
 .reserve-btn {
   background-color: black;
@@ -178,16 +178,16 @@
   .reserve-btn::before {
     margin-right: 6px;
   }
-  
+
 
   select:invalid {
     color: #999;
   }
-  
+
   .filter-item {
     width: 140px; /* Equal width for all filter fields */
   }
-  
+
   .filter-item input,
   .filter-item select {
     width: 100%;
@@ -197,7 +197,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
   }
-  
+
   .modal {
   position: fixed;
   top: 0;
@@ -382,6 +382,18 @@
   border-radius: 6px;
   cursor: pointer;
 }
+.past-booking {
+  opacity: 0.5;
+  pointer-events: none;
+  background-color: #f1f1f1;
+}
+
+.status-label {
+  font-style: italic;
+  color: #999;
+  font-size: 0.9em;
+}
+
 
 
 
@@ -441,8 +453,8 @@
     padding: 10px;
   }
 
-  
-  
+
+
 
   .toolbar .filters {
     flex-direction: column;

@@ -4,7 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { UserListComponent } from './user-list.component';
-
+import { Booking } from '../models/user.model';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -28,9 +28,8 @@ export class AdminDashboardComponent implements OnInit {
   reservations: {
     date: string;
     time: string;
-    bookings: { name: string; seats: number }[];
+    bookings: Booking[];
   }[] = [];
-  
 
   constructor(
     private userService: UserService,
@@ -39,103 +38,70 @@ export class AdminDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-  this.loadLocalBookings();
-
-  if (isPlatformBrowser(this.platformId)) {
-    console.log(localStorage.getItem('booking'));
-  }
-}
-  
-loadLocalBookings() {
-  if (isPlatformBrowser(this.platformId)) {
-    const stored = localStorage.getItem('booking');
-    if (stored) {
-      try {
-        const rawBookings = JSON.parse(stored);
-
-        if (Array.isArray(rawBookings)) {
-          const grouped: { [key: string]: { date: string; time: string; bookings: { name: string; seats: number }[] } } = {};
-
-          rawBookings.forEach((booking: any) => {
-            if (!booking.date || !booking.time || !booking.name || !booking.guests) return;
-
-            // Convert booking.time like "06:00 PM" => hour string "6" or "11:00 PM" => "11"
-            const timeString = booking.time; // e.g. "06:00 PM"
-
-            // Parse hour number from time string
-            const [timePart, ampm] = timeString.split(' ');  // ["06:00", "PM"]
-            let [hourStr] = timePart.split(':');              // "06"
-            let hourNum = parseInt(hourStr, 10);
-
-            if (ampm === 'PM' && hourNum < 12) hourNum += 12;
-            if (ampm === 'AM' && hourNum === 12) hourNum = 0;
-
-            // If your admin only expects hours 4 to 11 PM, adjust hourNum if needed
-            // Example: 6 PM => 6, 11 PM => 11
-            // If you want to display in 12h format from 4PM to 11PM, just use hourNum.toString()
-            const hour = hourNum.toString();
-
-            const key = `${booking.date}_${hour}`;
-            if (!grouped[key]) {
-              grouped[key] = {
-                date: booking.date,
-                time: hour,
-                bookings: []
-              };
-            }
-
-            grouped[key].bookings.push({
-              name: booking.name,
-              seats: Number(booking.guests)
-            });
-          });
-
-          this.reservations = Object.values(grouped);
-          return;
-        }
-      } catch (e) {
-        console.error('Failed to parse bookings from localStorage:', e);
-      }
-    }
-
-    // fallback: check adminReservations if booking is empty
-    const fallback = localStorage.getItem('adminReservations');
-    if (fallback) {
-      try {
-        const parsedFallback = JSON.parse(fallback);
-        if (Array.isArray(parsedFallback)) {
-          this.reservations = parsedFallback;
-          return;
-        }
-      } catch (e) {
-        console.error('Failed to parse adminReservations:', e);
-      }
-    }
+    this.loadLocalBookings();
   }
 
-  
-}
+  loadLocalBookings() {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const raw = localStorage.getItem('booking');
+    let bookings: Booking[] = [];
+
+    try {
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          bookings = parsed.filter((b: Booking) => b.status !== 'Deleted');
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse bookings from localStorage:', e);
+    }
+
+    const grouped: {
+      [key: string]: {
+        date: string;
+        time: string;
+        bookings: Booking[];
+      };
+    } = {};
+
+    bookings.forEach(booking => {
+      if (!booking.date || !booking.time || !booking.name || !booking.guests) return;
+
+      const hour = this.time12hTo24hHour(booking.time);
+      const key = `${booking.date}_${hour}`;
+
+      if (!grouped[key]) {
+        grouped[key] = {
+          date: booking.date,
+          time: hour,
+          bookings: []
+        };
+      }
+
+      grouped[key].bookings.push({ ...booking, time: hour });
+    });
+
+    this.reservations = Object.values(grouped);
+  }
 
   signOut() {
-    const confirmed = confirm('Are you sure you want to log out?');
-    if (confirmed) {
+    if (confirm('Are you sure you want to log out?')) {
       this.userService.signOut();
     }
   }
 
   getCurrentDate(): string {
-    const currentDate = new Date();
-    return currentDate.toISOString().split('T')[0];
+    return new Date().toISOString().split('T')[0];
   }
 
   get filteredReservations() {
-    const hours = ['4', '5', '6', '7', '8', '9', '10', '11'];
+    const hours = ['16', '17', '18', '19', '20', '21', '22', '23'];
     const filtered = [];
 
     for (const hour of hours) {
-      let slot = this.reservations.find(
-        r => r.date === this.reservationDate && r.time === hour
-      );
+      let slot = this.reservations.find(r => r.date === this.reservationDate && r.time === hour);
       if (!slot) {
         slot = { date: this.reservationDate, time: hour, bookings: [] };
       }
@@ -153,79 +119,40 @@ loadLocalBookings() {
     return filtered;
   }
 
-  getFilteredBookings(slot: { time: string; bookings: { name: string; seats: number }[] })
-   {
-    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
-    return slot.bookings; // fallback to original slot bookings
+  releaseBooking(bookingToRemove: Booking, time: string) {
+    if (!confirm(`Are you sure you want to release the booking for ${bookingToRemove.name}?`)) return;
+
+    this.markBookingDeletedInStorage(bookingToRemove, time);
+    this.loadLocalBookings();
   }
 
-  const bookingsFromStorage = JSON.parse(localStorage.getItem('booking') || '[]');
+  private markBookingDeletedInStorage(bookingToRemove: Booking, time: string) {
+    if (!isPlatformBrowser(this.platformId)) return;
 
-  return slot.bookings.filter(b => {
-    // Find a matching booking in localStorage
-    const match = bookingsFromStorage.find((stored: any) =>
-      stored.name === b.name &&
-      Number(stored.guests) === b.seats &&
-      stored.date === this.reservationDate &&
-      stored.time === slot.time // ✅ Make sure we're using slot.time here
-    );
+    const raw = localStorage.getItem('booking');
+    if (!raw) return;
 
-    // Skip if status is Deleted
-    if (match?.status === 'Deleted') return false;
-
-    // Optional search filter
-    if (this.reservationName) {
-      return b.name.toLowerCase().includes(this.reservationName.toLowerCase());
-    }
-
-    return true;
-  });
-}
-
-releaseBooking(bookingToRemove: { name: string; seats: number }, time: string) {
-  console.log('Release clicked for:', bookingToRemove, time);
-  const confirmed = confirm(`Are you sure you want to release the booking for ${bookingToRemove.name}?`);
-  if (!confirmed) return;
-
-  const slot = this.reservations.find(
-    r => r.date === this.reservationDate && r.time === time
-  );
-
-  if (slot) {
-    // Do not remove from slot.bookings — just visually filter them
-    this.saveReservationsToStorage();
-  }
-
-  try {
-    const stored = localStorage.getItem('booking');
-    if (stored) {
-      let bookings = JSON.parse(stored);
-
-      const index = bookings.findIndex((b: any) =>
+    try {
+      const bookings: Booking[] = JSON.parse(raw);
+      const idx = bookings.findIndex(b =>
         b.name === bookingToRemove.name &&
-        Number(b.guests) === bookingToRemove.seats &&
+        b.guests === bookingToRemove.guests &&
         b.date === this.reservationDate &&
-        b.time === time
+        this.time12hTo24hHour(b.time) === time &&
+        b.status !== 'Deleted'
       );
-
-      if (index !== -1) {
-        bookings[index].status = 'Deleted'; // Mark as deleted
+      if (idx !== -1) {
+        bookings[idx].status = 'Deleted';
         localStorage.setItem('booking', JSON.stringify(bookings));
-        console.log('Booking marked as Deleted in localStorage.');
       }
+    } catch (e) {
+      console.error('Error marking booking as Deleted:', e);
     }
-  } catch (error) {
-    console.error('Error marking booking as Deleted:', error);
   }
-}
-
-
 
   openReservationModal(time: string) {
     this.selectedTimeSlot = time;
-    const slot = this.reservations.find(
-      r => r.date === this.reservationDate && r.time === this.selectedTimeSlot
-    );
+    const slot = this.reservations.find(r => r.date === this.reservationDate && r.time === this.selectedTimeSlot);
     const takenSeats = slot ? this.getTotalSeats(slot) : 0;
     this.availableSeats = this.maxSeats - takenSeats;
 
@@ -233,84 +160,104 @@ releaseBooking(bookingToRemove: { name: string; seats: number }, time: string) {
     this.showReservationModal = true;
   }
 
-saveReservationsToStorage() {
-  if (isPlatformBrowser(this.platformId)) {
-    // Flatten the reservations structure to match the expected booking format
-    const flatReservations = this.reservations.flatMap(res =>
+  confirmReservation() {
+    let slot = this.reservations.find(r => r.date === this.reservationDate && r.time === this.selectedTimeSlot);
+
+    if (!slot) {
+      slot = {
+        date: this.reservationDate,
+        time: this.selectedTimeSlot,
+        bookings: []
+      };
+      this.reservations.push(slot);
+    }
+
+    const newSeats = Number(this.newBooking.seats);
+    const totalSeats = this.getTotalSeats(slot);
+
+    if (totalSeats + newSeats <= this.maxSeats) {
+      const booking: Booking = {
+        id: crypto.randomUUID?.() || Math.random().toString(36).substring(2),
+        userId: '',
+        email: this.newBooking.email,
+        name: this.newBooking.name,
+        date: this.reservationDate,
+        time: this.hour24To12hFormat(this.selectedTimeSlot),
+        guests: newSeats,
+        status: 'Reserved'
+      };
+
+      slot.bookings.push(booking);
+      this.saveToStorage();
+      this.showReservationModal = false;
+      this.showSuccessModal = true;
+    } else {
+      alert(`Cannot add ${newSeats} guests. Only ${this.maxSeats - totalSeats} seats remaining.`);
+    }
+  }
+
+  saveToStorage() {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const flat = this.reservations.flatMap(res =>
       res.bookings.map(b => ({
-        date: res.date,
-        time: res.time,
-        name: b.name,
-        guests: b.seats
+        ...b,
+        time: this.hour24To12hFormat(res.time),
+        date: res.date
       }))
     );
 
-    localStorage.setItem('adminReservations', JSON.stringify(flatReservations));
+    localStorage.setItem('booking', JSON.stringify(flat));
   }
-}
-
 
   closeReservationModal() {
     this.showReservationModal = false;
   }
 
-confirmReservation() {
-  let slot = this.reservations.find(
-    r => r.date === this.reservationDate && r.time === this.selectedTimeSlot
-  );
-
-  const newSeats = Number(this.newBooking.seats);
-  if (!slot) {
-    slot = {
-      date: this.reservationDate,
-      time: this.selectedTimeSlot,
-      bookings: []
-    };
-    this.reservations.push(slot);
-  }
-
-  const totalSeats = this.getTotalSeats(slot);
-  if (totalSeats + newSeats <= this.maxSeats) {
-    slot.bookings.push({
-      name: this.newBooking.name,
-      seats: newSeats
-    });
-
-    this.saveReservationsToStorage();
-    this.showReservationModal = false;
-    this.showSuccessModal = true;
-  } else {
-    alert(`Cannot add ${newSeats} guests. Only ${this.maxSeats - totalSeats} seats remaining.`);
-  }
-}
-
- getTotalSeats(slot: { bookings: { name: string; seats: number }[]; time: string }): number {
-  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
-    return slot.bookings.reduce((sum, b) => sum + b.seats, 0); // fallback: assume all are valid
-  }
-  const bookingsFromStorage = JSON.parse(localStorage.getItem('booking') || '[]');
-
-  let total = 0;
-
-  for (const b of slot.bookings) {
-    const match = bookingsFromStorage.find((stored: any) =>
-      stored.name === b.name &&
-      Number(stored.guests) === b.seats &&
-      stored.date === this.reservationDate &&
-      stored.time === slot.time
-    );
-
-    if (match?.status === 'Deleted') continue;  // skip deleted bookings
-
-    total += b.seats;
-  }
-
-  return total;
-}
-
-
   closeSuccessModal() {
     this.showSuccessModal = false;
   }
 
+  getTotalSeats(slot: { bookings: Booking[] }): number {
+    return this.getFilteredBookings(slot)
+      .filter(booking => booking.status !== 'Cancelled')
+      .reduce((total, booking) => total + booking.guests, 0);
+  }
+
+  time12hTo24hHour(time12h: string): string {
+    if (!time12h) return '';
+
+    const [time, meridian] = time12h.split(' ');
+    if (!time || !meridian) return '';
+
+    let [hours, minutes] = time.split(':').map(Number);
+    if (meridian === 'PM' && hours < 12) hours += 12;
+    if (meridian === 'AM' && hours === 12) hours = 0;
+
+    return hours.toString();
+  }
+
+  hour24To12hFormat(hourStr: string): string {
+    let hour = parseInt(hourStr, 10);
+    let meridian = 'AM';
+    if (hour >= 12) {
+      meridian = 'PM';
+      if (hour > 12) hour -= 12;
+    }
+    if (hour === 0) hour = 12;
+    return `${hour.toString().padStart(2, '0')}:00 ${meridian}`;
+  }
+
+  getFilteredBookings(slot: { bookings: Booking[] }) {
+    if (!this.reservationName) return slot.bookings;
+    return slot.bookings.filter(b =>
+      b.name.toLowerCase().includes(this.reservationName.toLowerCase())
+    );
+  }
+
+  isPastSlot(slot: { date: string; time: string }): boolean {
+    const dateStr = `${slot.date}T${slot.time.padStart(2, '0')}:00:00`;
+    const slotDate = new Date(dateStr);
+    return slotDate < new Date();
+  }
 }

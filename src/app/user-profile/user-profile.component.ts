@@ -15,6 +15,7 @@ import { User, Booking } from '../models/user.model';
 })
 export class UserProfileComponent implements OnInit {
   user: User = {
+    id: '',
     name: '',
     email: '',
     phone: '',
@@ -33,7 +34,7 @@ export class UserProfileComponent implements OnInit {
   showCancelModal = false;
   cancelTargetId: string | null = null;
   viewerIsAdmin: boolean = false;
-  
+
 
   constructor(
     public userService: UserService,
@@ -120,12 +121,38 @@ export class UserProfileComponent implements OnInit {
 }
 
 
-  refreshBookingsDisplay(): void {
-    this.bookings = this.user.bookings.map(b => ({
+refreshBookingsDisplay(): void {
+  const userId = this.user.id;
+  if (!userId) return;
+
+  const storedBookingStr = localStorage.getItem('booking');
+  if (!storedBookingStr) return;
+
+  let allBookings: Booking[] = [];
+
+  try {
+    allBookings = JSON.parse(storedBookingStr);
+  } catch (e) {
+    console.error('Failed to parse booking data:', e);
+    return;
+  }
+
+  console.log('Viewing profile for user ID:', userId);
+  console.log('All bookings:', allBookings);
+
+  this.bookings = allBookings
+    .filter(b => b.userId === userId)
+    .map(b => ({
       ...b,
       timeAgo: this.getTimeAgo(b.date, b.time)
     }));
-  }
+
+  console.log('Filtered bookings:', this.bookings);
+}
+
+
+
+
 
   markAsDeleted(): void {
     this.user.status = 'Deleted';
@@ -153,7 +180,7 @@ export class UserProfileComponent implements OnInit {
     const weeks = Math.floor(days / 7);
     return `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
   }
-  
+
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -197,7 +224,7 @@ export class UserProfileComponent implements OnInit {
       };
       localStorage.setItem('Cancelledbookings', JSON.stringify(storedBookings));
     } else {
-      this.userService.setUser(this.user);
+      this.userService.updateUserByEmail(this.user.email, this.user);
     }
 
     if (isPlatformBrowser(this.platformId)) {
@@ -232,17 +259,48 @@ export class UserProfileComponent implements OnInit {
     this.showCancelModal = false;
   }
 
-  confirmCancel(): void {
-    if (this.cancelTargetId) {
-      const booking = this.user.bookings.find(b => b.id === this.cancelTargetId);
-      if (booking?.status === 'Reserved') {
-        booking.status = 'Cancelled';
-        this.userService.setUser(this.user);
+confirmCancel(): void {
+  if (!this.cancelTargetId) return;
+
+  const currentUser = this.userService.getUser();
+  const storedBookingStr = localStorage.getItem('booking');
+
+  if (!storedBookingStr || !currentUser) {
+    this.closeCancelPopup();
+    return;
+  }
+
+  try {
+    let bookings: Booking[] = JSON.parse(storedBookingStr);
+    let updated = false;
+
+    bookings = bookings.map(b => {
+      if (b.id === this.cancelTargetId && b.userId === currentUser.id && b.status === 'Reserved') {
+        updated = true;
+        return { ...b, status: 'Cancelled' };
       }
+      return b;
+    });
+
+    if (updated) {
+      localStorage.setItem('booking', JSON.stringify(bookings));
+      console.log('Booking cancelled and updated in localStorage.');
+
+      // Sync change to in-memory user object as well
+      this.user.bookings = this.user.bookings?.map(b =>
+        b.id === this.cancelTargetId ? { ...b, status: 'Cancelled' } : b
+      );
+
+      this.userService.setUser(this.user);
       this.refreshBookingsDisplay();
     }
-    this.closeCancelPopup();
+
+  } catch (e) {
+    console.error('Error updating booking cancellation:', e);
   }
+
+  this.closeCancelPopup();
+}
 
   signOut(): void {
     this.userService.signOut();

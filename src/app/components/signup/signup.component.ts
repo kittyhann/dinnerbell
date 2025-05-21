@@ -34,13 +34,14 @@ export class SignupComponent {
   }
 
   const pendingUser: User = {
+    id: this.generateId(),
     name: this.username,
     email: this.email,
     phone: this.phone,
     password: this.password,
     avatarUrl: 'assets/default-avatar.jpg',
     bookings: [],
-    joinedOn: new Date().toLocaleDateString() 
+    joinedOn: new Date().toLocaleDateString()
   };
 
   this.userService.registerUser(pendingUser); // Fake registration
@@ -50,7 +51,7 @@ export class SignupComponent {
   this.switchForm.emit('otp'); // ✅ Tell Navbar to show OTP modal
 }
 
-  
+
 
   switchToSignUp() {
     this.switchForm.emit('signup');
@@ -58,5 +59,8 @@ export class SignupComponent {
 
   switchToSignIn() {
     this.switchForm.emit('signin');
+  }
+  generateId(): string {
+    return Math.random().toString(36).substr(2, 9);
   }
 }

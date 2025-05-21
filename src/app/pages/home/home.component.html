@@ -39,39 +39,44 @@
     <div class="form-row-booking">
       <div class="inputs-group">
         <label>Date:</label>
-        <input type="date" [(ngModel)]="selectedDate" [min]="minDate" (change)="calculateAvailability()" />
+        <input
+          type="date"
+          [(ngModel)]="selectedDate"
+          [min]="minDate"
+          (change)="calculateAvailability()" />
 
         <label>Time:</label>
         <select [(ngModel)]="selectedTime">
           <option
             *ngFor="let time of timeSlots"
             [value]="time"
-            [disabled]="availableSeatsPerSlot[time] <= 0"
-          >
+            [disabled]="availableSeatsPerSlot[time] <= 0 || isPastSlot(time)"
+            [ngClass]="{ 'grayed-option': isPastSlot(time) }">
             {{ time }}
           </option>
         </select>
 
-          <label>People:</label>
-          <select [(ngModel)]="guests">
-            <option *ngFor="let option of getAvailableGuestOptions()" [value]="option">
-              {{ option }}
-            </option>
-          </select>
-          <small *ngIf="availableSeatsPerSlot[selectedTime] === 0">
-            Table Full. No seats available.
-          </small>
+        <label>People:</label>
+        <select [(ngModel)]="guests">
+          <option *ngFor="let option of getAvailableGuestOptions()" [value]="option">
+            {{ option }}
+          </option>
+        </select>
 
+        <small *ngIf="availableSeatsPerSlot[selectedTime] === 0">
+          Table Full. No seats available.
+        </small>
       </div>
-        <button class="book-btn" 
-                [disabled]="availableSeatsPerSlot[selectedTime] <= 0"
-                (click)="bookTable()">
-          Book a Table
-        </button>
 
-</div>
+      <button
+        class="book-btn"
+        [disabled]="availableSeatsPerSlot[selectedTime] <= 0 || isPastSlot(selectedTime)"
+        (click)="bookTable()">
+        Book a Table
+      </button>
+    </div>
 
-    <!-- Booking Popup -->  
+    <!-- Booking Popup -->
     <app-booking-form
       *ngIf="showBookingForm"
       [selectedDate]="selectedDate"
@@ -88,14 +93,13 @@
       (close)="showConfirmation = false">
     </app-booked-confirmation>
 
-    <!-- Time Slot Availability -->
     <div class="time-slots-header">Available Time Slots</div>
     <div class="time-slots">
       <span
         *ngFor="let slot of timeSlots"
         [class.full]="availableSeatsPerSlot[slot] <= 0"
         [class.active]="availableSeatsPerSlot[slot] > 0"
-      >
+        [ngClass]="{ 'disabled-slot': isPastSlot(slot) }">
         {{ slot }} -
         <small>
           {{

@@ -34,6 +34,7 @@ export class SigninComponent {
   if (trimmedUserName === 'admin' && trimmedPassword === 'admin123') {
   alert('Welcome, Admin!');
   this.userService.setUser({
+    id: 'admin',
     name: 'admin',
     email: '',
     phone: '',

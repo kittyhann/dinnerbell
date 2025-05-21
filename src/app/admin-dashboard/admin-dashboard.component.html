@@ -39,19 +39,39 @@
       <section class="reservations">
         <ng-container *ngFor="let slot of filteredReservations">
           <div class="timeslot">
-            <h4>{{ slot.time }} PM</h4>
+            <h4>{{ hour24To12hFormat(slot.time) }}</h4>
 
-            <div class="booking-card" *ngFor="let booking of getFilteredBookings(slot)">
-              <div class="booking-info">
-                <p>{{ booking.name }}<br />👥 {{ booking.seats }}</p>
-                <button class="release-btn" (click)="releaseBooking(booking, slot.time)">Release</button>
-              </div>
+            <div class="booking-card"
+              *ngFor="let booking of getFilteredBookings(slot)"
+              [ngClass]="{
+                'past-booking': isPastSlot(slot),
+                'cancelled-booking': booking.status === 'Cancelled'
+              }">
+            <div class="booking-info">
+              <p>{{ booking.name }}<br />👥 {{ booking.guests }}</p>
+
+              <!-- Cancelled -->
+              <ng-container *ngIf="booking.status === 'Cancelled'; else activeStatusBlock">
+                <span class="status-label cancelled">❌ Cancelled by the user</span>
+              </ng-container>
+
+              <!-- Time passed / Release button -->
+              <ng-template #activeStatusBlock>
+                <ng-container *ngIf="isPastSlot(slot); else activeControls">
+                  <span class="status-label">⏳ Time has Passed</span>
+                </ng-container>
+
+                <ng-template #activeControls>
+                  <button class="release-btn" (click)="releaseBooking(booking, slot.time)">Release</button>
+                </ng-template>
+              </ng-template>
             </div>
+          </div>
 
             <p class="seats-left">{{ getTotalSeats(slot) }}/{{ maxSeats }}</p>
 
             <button class="reserve-btn"
-                    [disabled]="getTotalSeats(slot) >= maxSeats"
+                    [disabled]="getTotalSeats(slot) >= maxSeats || isPastSlot(slot)"
                     (click)="openReservationModal(slot.time)">
               <i class="fas fa-plus"></i> Reserve Table
             </button>
@@ -76,8 +96,8 @@
           <label>Guests</label>
           <div class="guest-select">
             <select [(ngModel)]="newBooking.seats">
-              <option *ngFor="let i of [].constructor(availableSeats); let index = index" [value]="index + 1">
-                {{ index + 1 }}
+              <option *ngFor="let i of [].constructor(availableSeats); let idx = index" [value]="idx + 1">
+                {{ idx + 1 }}
               </option>
             </select>
           </div>
@@ -110,7 +130,6 @@
           <button class="done-btn" (click)="closeSuccessModal()">Done</button>
         </div>
       </div>
-
     </ng-container>
   </main>
 </div>

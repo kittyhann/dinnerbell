@@ -6,8 +6,8 @@
     <div class="profile-card">
       <div class="profile-header">
         <!-- Show Go Back only for normal users -->
-        <i 
-  class="fas fa-arrow-left back-arrow" 
+        <i
+  class="fas fa-arrow-left back-arrow"
   (click)="goBack()">
 </i>
         <h2>{{ viewerIsAdmin ? 'User Profile' : 'My Profile' }}</h2>
@@ -16,16 +16,16 @@
       <div class="avatar-wrapper">
         <img [src]="previewUrl || user.avatarUrl" alt="Profile Picture" class="avatar" />
         <!-- Only non-admin users can edit the avatar -->
-        <span 
-          class="edit-avatar" 
-          *ngIf="!viewerIsAdmin" 
+        <span
+          class="edit-avatar"
+          *ngIf="!viewerIsAdmin"
           (click)="triggerFileInput(fileInput)">✎</span>
-        <input 
-          type="file" 
-          #fileInput 
-          accept="image/*" 
-          (change)="onFileSelected($event)" 
-          hidden 
+        <input
+          type="file"
+          #fileInput
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          hidden
         />
       </div>
 
@@ -45,9 +45,9 @@
 
       <!-- Save Changes button for normal users -->
       <div *ngIf="!viewerIsAdmin" class="user-controls-bottom">
-        <button 
-          type="button" 
-          class="save-btn" 
+        <button
+          type="button"
+          class="save-btn"
           (click)="saveChanges()"
           [disabled]="loading">
           Save Changes
@@ -62,7 +62,7 @@
       <div *ngIf="bookings.length === 0" class="no-bookings-message">
         <p>No bookings yet. Time to make your first reservation!</p>
       </div>
-      
+
       <div *ngFor="let booking of bookings" class="booking-entry">
         <div class="booking-top">
           <div class="booking-status" [ngClass]="{
@@ -80,7 +80,7 @@
             <i class="fa fa-calendar-alt"></i>
             {{ booking.date }} | {{ booking.time }}
           </div>
-          <div *ngIf="booking.status === 'Reserved' && !isAdmin" class="cancel-link">
+          <div *ngIf="booking.status === 'Reserved' && !viewerIsAdmin" class="cancel-link">
             <a (click)="openCancelPopup(booking.id)">Cancel Booking</a>
           </div>
         </div>
@@ -97,7 +97,7 @@
         <!-- User Status Row -->
         <div class="status-row">
           <p class="status-label">
-            User Status: 
+            User Status:
             <strong [ngClass]="{
               'text-green': user.status === 'Active',
               'text-red': user.status === 'Deleted'
@@ -107,16 +107,16 @@
           </p>
 
           <div class="status-buttons">
-            <button 
+            <button
               class="delete-btn"
-              *ngIf="user.status === 'Active'" 
+              *ngIf="user.status === 'Active'"
               (click)="markAsDeleted()">
               Delete User
             </button>
 
-            <button 
+            <button
               class="reactivate-btn"
-              *ngIf="user.status === 'Deleted'" 
+              *ngIf="user.status === 'Deleted'"
               (click)="markAsActive()">
               Reactivate User
             </button>
@@ -124,9 +124,9 @@
         </div>
 
         <!-- Save Button for Admin -->
-        <button 
-          type="button" 
-          class="save-btn" 
+        <button
+          type="button"
+          class="save-btn"
           (click)="saveChanges()"
           [disabled]="loading">
           Save/Update Details

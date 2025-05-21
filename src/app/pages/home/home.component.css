@@ -5,6 +5,15 @@
   background-color: #f3f3f3;
 }
 
+.grayed-option {
+  color: #999 !important;
+  background-color: #f4f4f4;
+}
+
+.disabled-slot {
+  opacity: 0.5;
+  pointer-events: none;
+}
 
 .card {
   width: 100%;
