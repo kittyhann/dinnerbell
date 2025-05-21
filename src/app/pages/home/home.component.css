@@ -179,20 +179,23 @@
   margin-bottom: 32px;
 }
 
+.time-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px; /* further reduced */
+  margin-bottom: 24px;
+}
+
 .time-slots span {
-  padding: 10px 20px;
+  padding: 12px 12px; /* smaller padding */
+  font-size: 0.8rem; /* smaller text */
   border: 1px solid #000;
   background: white;
   color: #333;
   font-weight: 500;
   border-radius: 6px;
   cursor: pointer;
-}
-.time-slots span.full {
-  background-color: #ccc;
-  color: #666;
-  cursor: not-allowed;
-  text-decoration: line-through;
 }
 
 .time-slots span.active {
