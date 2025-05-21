@@ -14,6 +14,6 @@ export default `<!doctype html>
 </script>
   <base href="/dinnerbell/"/>
   <app-root></app-root>
-<script src="polyfills-FFHMD2TL.js" type="module"></script><script src="main-XCJBTCML.js" type="module"></script></body>
+<script src="polyfills-FFHMD2TL.js" type="module"></script><script src="main-B44T3J35.js" type="module"></script></body>
 </html>
 `;
